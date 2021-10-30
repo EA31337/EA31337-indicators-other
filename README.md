@@ -4,7 +4,7 @@
 [![Channel][tg-channel-image]][tg-channel-link]
 [![Discuss][gh-discuss-badge]][gh-discuss-link]
 [![Status][gha-image-check-master]][gha-link-check-master]
-<!--[![Status][gha-image-compile-master]][gha-link-compile-master]-->
+[![Status][gha-image-compile-master]][gha-link-compile-master]
 
 ## About the project
 
