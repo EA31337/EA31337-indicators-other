@@ -4,4 +4,4 @@
  */
 
 // Includes the main file.
-#include "Indi_Stg_ATR_MA_Trend.mq5"
+#include "ATR_MA_Trend.mq5"
