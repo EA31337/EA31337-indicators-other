@@ -27,7 +27,7 @@ jobs:
     strategy:
       matrix:
         file:
-          - Misc/ATR_MA_Trend
+          - Price/TMA_True
     steps:
       - uses: actions/checkout@v2
       - uses: actions/checkout@v2
@@ -60,6 +60,7 @@ jobs:
       matrix:
         file:
           - Misc/ATR_MA_Trend
+          - Price/TMA_True
     steps:
       - uses: actions/checkout@v2
       - uses: actions/checkout@v2
