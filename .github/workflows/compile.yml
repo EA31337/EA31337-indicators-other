@@ -29,6 +29,7 @@ jobs:
         file:
           - Oscillator/Elliott_Wave_Oscillator2
           - Price/TMA_True
+          - Prices/SAWA
           - Prices/SVE_Bollinger_Bands
     steps:
       - uses: actions/checkout@v2
@@ -64,6 +65,7 @@ jobs:
           - Misc/ATR_MA_Trend
           - Oscillator/Elliott_Wave_Oscillator2
           - Price/TMA_True
+          - Prices/SAWA
           - Prices/SVE_Bollinger_Bands
     steps:
       - uses: actions/checkout@v2
