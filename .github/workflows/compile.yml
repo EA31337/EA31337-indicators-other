@@ -53,7 +53,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Indicators
-          path: 'Indicators/*.ex?'
+          path: '*/*.ex?'
   Compile-MQL5:
     defaults:
       run:
@@ -89,4 +89,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Indicators
-          path: 'Indicators/*.ex?'
+          path: '*/*.ex?'
