@@ -27,6 +27,7 @@ jobs:
     strategy:
       matrix:
         file:
+          - Oscillator/Elliott_Wave_Oscillator2
           - Price/TMA_True
           - Prices/SVE_Bollinger_Bands
     steps:
@@ -61,6 +62,7 @@ jobs:
       matrix:
         file:
           - Misc/ATR_MA_Trend
+          - Oscillator/Elliott_Wave_Oscillator2
           - Price/TMA_True
           - Prices/SVE_Bollinger_Bands
     steps:
