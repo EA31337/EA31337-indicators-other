@@ -28,6 +28,7 @@ jobs:
       matrix:
         file:
           - Price/TMA_True
+          - Prices/SVE_Bollinger_Bands
     steps:
       - uses: actions/checkout@v2
       - uses: actions/checkout@v2
@@ -61,6 +62,7 @@ jobs:
         file:
           - Misc/ATR_MA_Trend
           - Price/TMA_True
+          - Prices/SVE_Bollinger_Bands
     steps:
       - uses: actions/checkout@v2
       - uses: actions/checkout@v2
