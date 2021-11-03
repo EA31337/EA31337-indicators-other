@@ -69,6 +69,7 @@ jobs:
           - Misc/TMA+CG_mladen_NRP_Histogram
           - Oscillator/Elliott_Wave_Oscillator2
           - Oscillator/SVE_Bollinger_Bands
+          - Price/SuperTrend
           - PriceBands/SAWA
           - PriceBands/TMA_True
     steps:
