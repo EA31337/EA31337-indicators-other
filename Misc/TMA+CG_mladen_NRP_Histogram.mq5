@@ -15,24 +15,23 @@
 #include <EA31337-classes/Indicator.mqh>
 #include <EA31337-classes/Indicators/Indi_ATR.mqh>
 #include <EA31337-classes/Indicators/Indi_MA.mqh>
-#include <EA31337-classes/Market.mqh>
 
 // Defines macros.
 #define extern input
-#define Bars (ChartStatic::iBars(_Symbol, _Period))
+#define Bars fmin(10000, (ChartStatic::iBars(_Symbol, _Period)))
+
+// Includes the main file.
+#include "TMA+CG_mladen_NRP_Histogram.mq4"
+
+// Custom indicator initialization function.
+void OnInit() { init(); }
 
 // Custom indicator iteration function.
 /*
 int OnCalculate(const int rates_total, const int prev_calculated, const int begin, const double &price[]) {
-  // if (begin > 0) PlotIndexSetInteger(0, PLOT_DRAW_BEGIN, begin + SvePeriod);
-  // if (begin > 0) PlotIndexSetInteger(1, PLOT_DRAW_BEGIN, begin + SvePeriod);
-  // if (begin > 0) PlotIndexSetInteger(2, PLOT_DRAW_BEGIN, begin + SvePeriod);
   int pos = fmax(0, prev_calculated - 1);
   IndicatorCounted(prev_calculated);
   start();
   return (rates_total);
 }
 */
-
-// Includes the main file.
-#include "TMA+CG_mladen_NRP_Histogram.mq4"

@@ -120,7 +120,7 @@ int start() {
 
   if (counted_bars < 0) return (-1);
   if (counted_bars > 0) counted_bars--;
-  limit = MathMin(Bars - 1, Bars - counted_bars + HalfLength);
+  limit = MathMin(Bars - 2, Bars - counted_bars + HalfLength);
 
   if (ReturnBars) {
     tmBuffer[0] = limit;

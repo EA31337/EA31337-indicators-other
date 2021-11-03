@@ -24,10 +24,10 @@
 #include <EA31337-classes/Indicators/Indi_MA.mqh>
 
 // Defines macros.
-#define Bars (ChartStatic::iBars(_Symbol, _Period))
+#define extern input
+#define Bars fmin(10000, (ChartStatic::iBars(_Symbol, _Period)))
 
 // Includes the main file.
-#define extern input
 #include "TMA+CG_mladen_NRP.mq4"
 
 // Custom indicator initialization function.
