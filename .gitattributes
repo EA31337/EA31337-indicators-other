@@ -1,0 +1,26 @@
+# git normalization file
+# @see http://www.kernel.org/pub/software/scm/git/docs/gitattributes.html
+
+# Shorthand for text files.
+# - Treat them as text.
+# - Ensure no CRLF line-endings, neither on checkout nor on checkin.
+# - Detect whitespace errors.
+#   - Exposed by default in `git diff --color` on the CLI.
+#   - Validate with `git diff --check`.
+#   - Deny applying with `git apply --whitespace=error-all`.
+#   - Fix automatically with `git apply --whitespace=fix`.
+[attr]utf8       text eol=lf whitespace=blank-at-eol,-blank-at-eof,-space-before-tab,tab-in-indent,tabwidth=2
+[attr]utf16      encoding=UTF-16LE-BOM diff merge eol=CRLF
+
+# Shorthand for binary files.
+# - Do not treat them as text.
+# - Include binary diff in patches instead of "binary files differ."
+[attr]binary  -text diff
+
+# Define text file attributes.
+*.ex?     binary
+*.h       utf8 diff=c
+*.json    utf8 diff=c
+*.mq?     utf8 diff=c
+*.mqproj  utf16 diff=c
+*.txt     utf8 diff=c
