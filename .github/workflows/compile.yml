@@ -27,10 +27,12 @@ jobs:
     strategy:
       matrix:
         file:
+          - Misc/TMA+CG_mladen_NRP
+          - Misc/TMA+CG_mladen_NRP_Histogram
           - Oscillator/Elliott_Wave_Oscillator2
-          - Price/TMA_True
+          - Oscillator/SVE_Bollinger_Bands
           - PriceBands/SAWA
-          - PriceBands/SVE_Bollinger_Bands
+          - PriceBands/TMA_True
     steps:
       - uses: actions/checkout@v2
       - uses: actions/checkout@v2
@@ -63,10 +65,12 @@ jobs:
       matrix:
         file:
           - Misc/ATR_MA_Trend
+          - Misc/TMA+CG_mladen_NRP
+          - Misc/TMA+CG_mladen_NRP_Histogram
           - Oscillator/Elliott_Wave_Oscillator2
-          - Price/TMA_True
+          - Oscillator/SVE_Bollinger_Bands
           - PriceBands/SAWA
-          - PriceBands/SVE_Bollinger_Bands
+          - PriceBands/TMA_True
     steps:
       - uses: actions/checkout@v2
       - uses: actions/checkout@v2
