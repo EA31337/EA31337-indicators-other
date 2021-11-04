@@ -6,6 +6,7 @@
 // Defines indicator properties.
 #property indicator_separate_window
 #property indicator_buffers 2
+#property indicator_plots 2
 #property indicator_type1 DRAW_HISTOGRAM
 #property indicator_type2 DRAW_HISTOGRAM
 #property indicator_minimum 0
