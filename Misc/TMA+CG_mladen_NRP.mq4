@@ -151,12 +151,25 @@ int start() {
     //
     //
 
-    tmBuffer[i] = iCustom(_Symbol, PERIOD_CURRENT, IndicatorFileName, true, false, HalfLength, AtrPeriod,
+    static int handle1 = NULL;
+    static int handle2 = NULL;
+    static int handle3 = NULL;
+
+    tmBuffer[i] = iCustom(handle1, _Symbol, PERIOD_CURRENT, IndicatorFileName, true, false, HalfLength, AtrPeriod,
                           BandsDeviations, MaAppliedPrice, MaMethod, MaPeriod, SignalDuration, Interpolate, 0, shift1);
-    upBuffer[i] = iCustom(_Symbol, PERIOD_CURRENT, IndicatorFileName, true, false, HalfLength, AtrPeriod,
+
+    Print("iCustom #1 = ", tmBuffer[i], ", error = ", _LastError);
+
+    upBuffer[i] = iCustom(handle2, _Symbol, PERIOD_CURRENT, IndicatorFileName, true, false, HalfLength, AtrPeriod,
                           BandsDeviations, MaAppliedPrice, MaMethod, MaPeriod, SignalDuration, Interpolate, 1, shift1);
-    dnBuffer[i] = iCustom(_Symbol, PERIOD_CURRENT, IndicatorFileName, true, false, HalfLength, AtrPeriod,
+                          
+    Print("iCustom #2 = ", upBuffer[i], ", error = ", _LastError);
+
+    dnBuffer[i] = iCustom(handle3, _Symbol, PERIOD_CURRENT, IndicatorFileName, true, false, HalfLength, AtrPeriod,
                           BandsDeviations, MaAppliedPrice, MaMethod, MaPeriod, SignalDuration, Interpolate, 2, shift1);
+
+    Print("iCustom #3 = ", dnBuffer[i], ", error = ", _LastError);
+
     upArrow[i] = EMPTY_VALUE;
     dnArrow[i] = EMPTY_VALUE;
     if (High[i + 1] > upBuffer[i + 1] && Close[i + 1] > Open[i + 1] && Close[i] < Open[i]) {
@@ -268,6 +281,9 @@ void calculateTma(int limit) {
     if (i == (Bars - HalfLength - 1)) {
       upBuffer[i] = tmBuffer[i];
       dnBuffer[i] = tmBuffer[i];
+
+//      Print("Setting value into wdBuffer[", i, "] where ArraySize(wdBuffer) = ", ArraySize(wdBuffer));
+
       if (diff >= 0) {
         wuBuffer[i] = MathPow(diff, 2);
         wdBuffer[i] = 0;
@@ -293,6 +309,14 @@ void calculateTma(int limit) {
     }
     upBuffer[i] = tmBuffer[i] + BandsDeviations * MathSqrt(wuBuffer[i]);
     dnBuffer[i] = tmBuffer[i] - BandsDeviations * MathSqrt(wdBuffer[i]);
+    
+    Print("upBuffer[", i, "] = ", upBuffer[i]);
+    Print("dnBuffer[", i, "] = ", dnBuffer[i]);
+    Print("wuBuffer[", i, "] = ", wuBuffer[i]);
+    Print("wdBuffer[", i, "] = ", wdBuffer[i]);
+    Print(" upArrow[", i, "] = ", upArrow[i]);
+    Print(" dnArrow[", i, "] = ", dnArrow[i]);
+
   }
 }
 

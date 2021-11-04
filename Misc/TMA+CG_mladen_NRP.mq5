@@ -6,6 +6,7 @@
 // Defines indicator properties.
 #property indicator_chart_window
 #property indicator_buffers 5
+#property indicator_plots 5
 #property indicator_color1 clrNONE
 #property indicator_color2 Coral
 #property indicator_color3 Coral
@@ -52,6 +53,27 @@ int OnCalculate(const int rates_total, const int prev_calculated, const int begi
   // if (begin > 0) PlotIndexSetInteger(0, PLOT_DRAW_BEGIN, begin + SvePeriod);
   // if (begin > 0) PlotIndexSetInteger(1, PLOT_DRAW_BEGIN, begin + SvePeriod);
   // if (begin > 0) PlotIndexSetInteger(2, PLOT_DRAW_BEGIN, begin + SvePeriod);
+
+  // Resizing buffers, as sometimes index buffers aren't automatically resized in MT5.
+  if (ArraySize(upBuffer) < rates_total) {
+    ArrayResize(upBuffer, rates_total, 4096);
+  }
+  if (ArraySize(dnBuffer) < rates_total) {
+    ArrayResize(dnBuffer, rates_total, 4096);
+  }
+  if (ArraySize(wuBuffer) < rates_total) {
+    ArrayResize(wuBuffer, rates_total, 4096);
+  }
+  if (ArraySize(wdBuffer) < rates_total) {
+    ArrayResize(wdBuffer, rates_total, 4096);
+  }
+  if (ArraySize(upArrow) < rates_total) {
+    ArrayResize(upArrow, rates_total, 4096);
+  }
+  if (ArraySize(dnArrow) < rates_total) {
+    ArrayResize(dnArrow, rates_total, 4096);
+  }
+
   int pos = fmax(0, prev_calculated - 1);
   IndicatorCounted(prev_calculated);
   start();
