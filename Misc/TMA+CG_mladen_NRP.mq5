@@ -26,6 +26,7 @@
 
 // Defines macros.
 #define extern input
+#define iCustom iCustom5
 #define Bars fmin(10000, (ChartStatic::iBars(_Symbol, _Period)))
 
 // Includes the main file.
