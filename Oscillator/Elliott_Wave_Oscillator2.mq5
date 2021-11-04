@@ -34,9 +34,9 @@ void OnInit() {
 }
 
 // Custom indicator iteration function.
-int OnCalculate(const int rates_total, const int prev_calculated, const int begin, const double &price[]) {
-  int pos = fmax(0, prev_calculated - 1);
+int OnCalculate(const int rates_total, const int prev_calculated,
+                const int begin, const double &price[]) {
   IndicatorCounted(prev_calculated);
-  start();
-  return (rates_total);
+  ResetLastError();
+  return start() >= 0 ? rates_total : 0;
 }
