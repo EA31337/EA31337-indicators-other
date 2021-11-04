@@ -53,6 +53,7 @@ void OnInit() {
 
 // Custom indicator iteration function.
 int OnCalculate(const int rates_total, const int prev_calculated, const int begin, const double &price[]) {
-  IndicatorCounted((start() == -1) ? 0 : rates_total);
-  return (rates_total);
+  IndicatorCounted(prev_calculated);
+  ResetLastError();
+  return start() >= 0 ? rates_total : 0;
 }
