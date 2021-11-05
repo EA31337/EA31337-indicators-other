@@ -91,7 +91,8 @@ int start() {
     }
 
     if (GetLastError() != ERR_NO_ERROR) {
-      return -1;
+      ResetLastError();
+      continue;
     }
 
     gadblMid[inx] = dblTma;

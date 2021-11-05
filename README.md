@@ -8,7 +8,7 @@
 
 ## About the project
 
-Collection of 3rd party indicatorsi
+Collection of 3rd party indicators.
 used for EA31337 strategies.
 
 Related project:
@@ -18,7 +18,7 @@ Related project:
 
 ## Dependencies
 
-| Tag      | Strategies |
+| Tag      | Classes    |
 |:--------:|:----------:|
 | v1.009   | v1.009     |
 

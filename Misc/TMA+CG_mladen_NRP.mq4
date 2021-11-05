@@ -8,7 +8,8 @@
 #property link "rajivxxx@gmail.com"
 
 #property indicator_chart_window
-#property indicator_buffers 5
+#property indicator_buffers 7
+#property indicator_plots 5
 #property indicator_color1 clrNONE
 #property indicator_color2 Coral
 #property indicator_color3 Coral
@@ -127,8 +128,7 @@ int start() {
     return (0);
   }
   if (CalculateTma) {
-    calculateTma(limit);
-    return (0);
+    return calculateTma(limit) ? 0 : -1;
   }
 
   // @fixme: Is this needed?
@@ -151,38 +151,42 @@ int start() {
     //
     //
 
-    static int handle1 = NULL;
-    static int handle2 = NULL;
-    static int handle3 = NULL;
+    int handle = NULL;
 
-    tmBuffer[i] = iCustom(handle1, _Symbol, PERIOD_CURRENT, IndicatorFileName, true, false, HalfLength, AtrPeriod,
+    tmBuffer[i] = iCustom(_Symbol, PERIOD_CURRENT, IndicatorFileName, true, false, HalfLength, AtrPeriod,
                           BandsDeviations, MaAppliedPrice, MaMethod, MaPeriod, SignalDuration, Interpolate, 0, shift1);
 
-    Print("iCustom #1 = ", tmBuffer[i], ", error = ", _LastError);
 
-    upBuffer[i] = iCustom(handle2, _Symbol, PERIOD_CURRENT, IndicatorFileName, true, false, HalfLength, AtrPeriod,
+    upBuffer[i] = iCustom(_Symbol, PERIOD_CURRENT, IndicatorFileName, true, false, HalfLength, AtrPeriod,
                           BandsDeviations, MaAppliedPrice, MaMethod, MaPeriod, SignalDuration, Interpolate, 1, shift1);
                           
-    Print("iCustom #2 = ", upBuffer[i], ", error = ", _LastError);
-
-    dnBuffer[i] = iCustom(handle3, _Symbol, PERIOD_CURRENT, IndicatorFileName, true, false, HalfLength, AtrPeriod,
+    dnBuffer[i] = iCustom(_Symbol, PERIOD_CURRENT, IndicatorFileName, true, false, HalfLength, AtrPeriod,
                           BandsDeviations, MaAppliedPrice, MaMethod, MaPeriod, SignalDuration, Interpolate, 2, shift1);
 
-    Print("iCustom #3 = ", dnBuffer[i], ", error = ", _LastError);
+
+    double _atr = iATR(_Symbol, PERIOD_CURRENT, AtrPeriod, i);
+
+    Print("iCustoms: #0 = ", DoubleToString(tmBuffer[i]), ", #1 = ", DoubleToString(upBuffer[i]), ", #2 = ", DoubleToString(dnBuffer[i]), ", Error = ", _LastError);
+    
+    if (GetLastError() != ERR_NO_ERROR) {
+      // Missing data for iATR.
+      ResetLastError();
+      return -1;
+    }
 
     upArrow[i] = EMPTY_VALUE;
     dnArrow[i] = EMPTY_VALUE;
     if (High[i + 1] > upBuffer[i + 1] && Close[i + 1] > Open[i + 1] && Close[i] < Open[i]) {
-      upArrow[i] = High[i] + iATR(_Symbol, PERIOD_CURRENT, AtrPeriod, i);
+      upArrow[i] = High[i] + _atr;
     }
     if (Low[i + 1] < dnBuffer[i + 1] && Close[i + 1] < Open[i + 1] && Close[i] > Open[i]) {
-      dnArrow[i] = High[i] - iATR(_Symbol, PERIOD_CURRENT, AtrPeriod, i);
+      dnArrow[i] = High[i] - _atr;
     }
 
     if (upArrow[i] != EMPTY_VALUE) {
       up_counter++;
     } else if (up_counter > 0 && up_counter < SignalDuration) {
-      upArrow[i] = High[i] + iATR(_Symbol, PERIOD_CURRENT, AtrPeriod, i);
+      upArrow[i] = High[i] + _atr;
       up_counter++;
     } else
       up_counter = 0;
@@ -190,7 +194,7 @@ int start() {
     if (dnArrow[i] != EMPTY_VALUE) {
       down_counter++;
     } else if (down_counter > 0 && down_counter < SignalDuration) {
-      dnArrow[i] = High[i] - iATR(_Symbol, PERIOD_CURRENT, AtrPeriod, i);
+      dnArrow[i] = High[i] - _atr;
       down_counter++;
     } else
       down_counter = 0;
@@ -246,7 +250,7 @@ int start() {
 //
 //
 
-void calculateTma(int limit) {
+bool calculateTma(int limit) {
   int i, j, k;
   double FullLength = 2.0 * HalfLength + 1.0;
 
@@ -261,10 +265,24 @@ void calculateTma(int limit) {
     double sumw = (HalfLength + 1);
     for (j = 1, k = HalfLength; j <= HalfLength; j++, k--) {
       sum += k * iMA(_Symbol, PERIOD_CURRENT, MaPeriod, 0, MaMethod, MaAppliedPrice, i + j);
+
+      if (GetLastError() != ERR_NO_ERROR) {
+        // Missing data for iMA.
+        ResetLastError();
+        return false;
+      }
+
       sumw += k;
 
       if (j <= i) {
         sum += k * iMA(_Symbol, PERIOD_CURRENT, MaPeriod, 0, MaMethod, MaAppliedPrice, i - j);
+
+        if (GetLastError() != ERR_NO_ERROR) {
+          // Missing data for iMA.
+          ResetLastError();
+          return false;
+        }
+        
         sumw += k;
       }
     }
@@ -310,14 +328,15 @@ void calculateTma(int limit) {
     upBuffer[i] = tmBuffer[i] + BandsDeviations * MathSqrt(wuBuffer[i]);
     dnBuffer[i] = tmBuffer[i] - BandsDeviations * MathSqrt(wdBuffer[i]);
     
-    Print("upBuffer[", i, "] = ", upBuffer[i]);
-    Print("dnBuffer[", i, "] = ", dnBuffer[i]);
-    Print("wuBuffer[", i, "] = ", wuBuffer[i]);
-    Print("wdBuffer[", i, "] = ", wdBuffer[i]);
-    Print(" upArrow[", i, "] = ", upArrow[i]);
-    Print(" dnArrow[", i, "] = ", dnArrow[i]);
-
+    Print("upBuffer[", i, "] = ", DoubleToString(upBuffer[i]));
+    Print("dnBuffer[", i, "] = ", DoubleToString(dnBuffer[i]));
+    Print("wuBuffer[", i, "] = ", DoubleToString(wuBuffer[i]));
+    Print("wdBuffer[", i, "] = ", DoubleToString(wdBuffer[i]));
+    Print(" upArrow[", i, "] = ", DoubleToString(upArrow[i]));
+    Print(" dnArrow[", i, "] = ", DoubleToString(dnArrow[i]));
   }
+  
+  return true;
 }
 
 //+------------------------------------------------------------------+
