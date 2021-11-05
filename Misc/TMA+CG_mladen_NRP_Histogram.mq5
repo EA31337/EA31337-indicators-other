@@ -31,7 +31,7 @@ void OnInit() { init(); }
 /*
 int OnCalculate(const int rates_total, const int prev_calculated, const int begin, const double &price[]) {
   int pos = fmax(0, prev_calculated - 1);
-  IndicatorCounted(prev_calculated);
+  IndicatorCounted(fmin(prev_calculated, Bars));
   start();
   return (rates_total);
 }
