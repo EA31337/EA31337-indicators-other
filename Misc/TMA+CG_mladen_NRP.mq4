@@ -119,8 +119,10 @@ int start() {
   int counted_bars = IndicatorCounted();
   int i, limit;
 
-  if (counted_bars < 0) return (-1);
-  if (counted_bars > 0) counted_bars--;
+  if (counted_bars < 0)
+    return (-1);
+  if (counted_bars > 0)
+    counted_bars--;
   limit = MathMin(Bars - 2, Bars - counted_bars + HalfLength);
 
   if (ReturnBars) {
@@ -132,15 +134,17 @@ int start() {
   }
 
   // @fixme: Is this needed?
-  // double _bar_limit = iCustom(_Symbol, PERIOD_CURRENT, IndicatorFileName, false, true);
-  // limit = MathMax(limit, MathMin(Bars - 1, _bar_limit * PERIOD_CURRENT / Period()));
+  // double _bar_limit = iCustom(_Symbol, PERIOD_CURRENT, IndicatorFileName,
+  // false, true); limit = MathMax(limit, MathMin(Bars - 1, _bar_limit *
+  // PERIOD_CURRENT / Period()));
 
   //
   //
   //
   //
   //
-  if (limit < Bars - 20) limit = 1;
+  if (limit < Bars - 20)
+    limit = 1;
   for (i = limit; i >= 0; i--) {
     int shift1 = iBarShift(_Symbol, PERIOD_CURRENT, Time[i]);
     datetime time1 = iTime(_Symbol, PERIOD_CURRENT, shift1);
@@ -153,21 +157,27 @@ int start() {
 
     int handle = NULL;
 
-    tmBuffer[i] = iCustom(_Symbol, PERIOD_CURRENT, IndicatorFileName, true, false, HalfLength, AtrPeriod,
-                          BandsDeviations, MaAppliedPrice, MaMethod, MaPeriod, SignalDuration, Interpolate, 0, shift1);
+    tmBuffer[i] =
+        iCustom(_Symbol, PERIOD_CURRENT, IndicatorFileName, true, false,
+                HalfLength, AtrPeriod, BandsDeviations, MaAppliedPrice,
+                MaMethod, MaPeriod, SignalDuration, Interpolate, 0, shift1);
 
+    upBuffer[i] =
+        iCustom(_Symbol, PERIOD_CURRENT, IndicatorFileName, true, false,
+                HalfLength, AtrPeriod, BandsDeviations, MaAppliedPrice,
+                MaMethod, MaPeriod, SignalDuration, Interpolate, 1, shift1);
 
-    upBuffer[i] = iCustom(_Symbol, PERIOD_CURRENT, IndicatorFileName, true, false, HalfLength, AtrPeriod,
-                          BandsDeviations, MaAppliedPrice, MaMethod, MaPeriod, SignalDuration, Interpolate, 1, shift1);
-                          
-    dnBuffer[i] = iCustom(_Symbol, PERIOD_CURRENT, IndicatorFileName, true, false, HalfLength, AtrPeriod,
-                          BandsDeviations, MaAppliedPrice, MaMethod, MaPeriod, SignalDuration, Interpolate, 2, shift1);
-
+    dnBuffer[i] =
+        iCustom(_Symbol, PERIOD_CURRENT, IndicatorFileName, true, false,
+                HalfLength, AtrPeriod, BandsDeviations, MaAppliedPrice,
+                MaMethod, MaPeriod, SignalDuration, Interpolate, 2, shift1);
 
     double _atr = iATR(_Symbol, PERIOD_CURRENT, AtrPeriod, i);
 
-    Print("iCustoms: #0 = ", DoubleToString(tmBuffer[i]), ", #1 = ", DoubleToString(upBuffer[i]), ", #2 = ", DoubleToString(dnBuffer[i]), ", Error = ", _LastError);
-    
+    Print("iCustoms: #0 = ", DoubleToString(tmBuffer[i]),
+          ", #1 = ", DoubleToString(upBuffer[i]),
+          ", #2 = ", DoubleToString(dnBuffer[i]), ", Error = ", _LastError);
+
     if (GetLastError() != ERR_NO_ERROR) {
       // Missing data for iATR.
       ResetLastError();
@@ -176,10 +186,12 @@ int start() {
 
     upArrow[i] = EMPTY_VALUE;
     dnArrow[i] = EMPTY_VALUE;
-    if (High[i + 1] > upBuffer[i + 1] && Close[i + 1] > Open[i + 1] && Close[i] < Open[i]) {
+    if (High[i + 1] > upBuffer[i + 1] && Close[i + 1] > Open[i + 1] &&
+        Close[i] < Open[i]) {
       upArrow[i] = High[i] + _atr;
     }
-    if (Low[i + 1] < dnBuffer[i + 1] && Close[i + 1] < Open[i + 1] && Close[i] > Open[i]) {
+    if (Low[i + 1] < dnBuffer[i + 1] && Close[i + 1] < Open[i + 1] &&
+        Close[i] > Open[i]) {
       dnArrow[i] = High[i] - _atr;
     }
 
@@ -199,8 +211,11 @@ int start() {
     } else
       down_counter = 0;
 
-    if (PERIOD_CURRENT <= Period() || shift1 == iBarShift(_Symbol, PERIOD_CURRENT, Time[i - 1])) continue;
-    if (!Interpolate) continue;
+    if (PERIOD_CURRENT <= Period() ||
+        shift1 == iBarShift(_Symbol, PERIOD_CURRENT, Time[i - 1]))
+      continue;
+    if (!Interpolate)
+      continue;
 
     //
     //
@@ -209,12 +224,16 @@ int start() {
     //
 
     int n = 1;
-    for (n = 1; i + n < Bars && Time[i + n] >= time1; n++) continue;
+    for (n = 1; i + n < Bars && Time[i + n] >= time1; n++)
+      continue;
     double factor = 1.0 / n;
     for (int k = 1; k < n; k++) {
-      tmBuffer[i + k] = k * factor * tmBuffer[i + n] + (1.0 - k * factor) * tmBuffer[i];
-      upBuffer[i + k] = k * factor * upBuffer[i + n] + (1.0 - k * factor) * upBuffer[i];
-      dnBuffer[i + k] = k * factor * dnBuffer[i + n] + (1.0 - k * factor) * dnBuffer[i];
+      tmBuffer[i + k] =
+          k * factor * tmBuffer[i + n] + (1.0 - k * factor) * tmBuffer[i];
+      upBuffer[i + k] =
+          k * factor * upBuffer[i + n] + (1.0 - k * factor) * upBuffer[i];
+      dnBuffer[i + k] =
+          k * factor * dnBuffer[i + n] + (1.0 - k * factor) * dnBuffer[i];
     }
   }
 
@@ -227,13 +246,18 @@ int start() {
   if (AlertsOn) {
     int forBar = AlertsOnCurrent ? 0 : 1;
     if (AlertsOnHighLow) {
-      if (High[forBar] > upBuffer[forBar] && High[forBar + 1] < upBuffer[forBar + 1])
+      if (High[forBar] > upBuffer[forBar] &&
+          High[forBar + 1] < upBuffer[forBar + 1])
         doAlert("High penetrated upper bar");
-      if (Low[forBar] < dnBuffer[forBar] && Low[forBar + 1] > dnBuffer[forBar + 1]) doAlert("low penetrated lower bar");
+      if (Low[forBar] < dnBuffer[forBar] &&
+          Low[forBar + 1] > dnBuffer[forBar + 1])
+        doAlert("low penetrated lower bar");
     } else {
-      if (Close[forBar] > upBuffer[forBar] && Close[forBar + 1] < upBuffer[forBar + 1])
+      if (Close[forBar] > upBuffer[forBar] &&
+          Close[forBar + 1] < upBuffer[forBar + 1])
         doAlert("Close penetrated upper bar");
-      if (Close[forBar] < dnBuffer[forBar] && Close[forBar + 1] > dnBuffer[forBar + 1])
+      if (Close[forBar] < dnBuffer[forBar] &&
+          Close[forBar + 1] > dnBuffer[forBar + 1])
         doAlert("Close penetrated lower bar");
     }
   }
@@ -261,10 +285,12 @@ bool calculateTma(int limit) {
   //
 
   for (i = limit; i >= 0; i--) {
-    double sum = (HalfLength + 1) * iMA(_Symbol, PERIOD_CURRENT, MaPeriod, 0, MaMethod, MaAppliedPrice, i);
+    double sum = (HalfLength + 1) * iMA(_Symbol, PERIOD_CURRENT, MaPeriod, 0,
+                                        MaMethod, MaAppliedPrice, i);
     double sumw = (HalfLength + 1);
     for (j = 1, k = HalfLength; j <= HalfLength; j++, k--) {
-      sum += k * iMA(_Symbol, PERIOD_CURRENT, MaPeriod, 0, MaMethod, MaAppliedPrice, i + j);
+      sum += k * iMA(_Symbol, PERIOD_CURRENT, MaPeriod, 0, MaMethod,
+                     MaAppliedPrice, i + j);
 
       if (GetLastError() != ERR_NO_ERROR) {
         // Missing data for iMA.
@@ -275,14 +301,15 @@ bool calculateTma(int limit) {
       sumw += k;
 
       if (j <= i) {
-        sum += k * iMA(_Symbol, PERIOD_CURRENT, MaPeriod, 0, MaMethod, MaAppliedPrice, i - j);
+        sum += k * iMA(_Symbol, PERIOD_CURRENT, MaPeriod, 0, MaMethod,
+                       MaAppliedPrice, i - j);
 
         if (GetLastError() != ERR_NO_ERROR) {
           // Missing data for iMA.
           ResetLastError();
           return false;
         }
-        
+
         sumw += k;
       }
     }
@@ -294,13 +321,17 @@ bool calculateTma(int limit) {
     //
     //
 
-    double diff = iMA(_Symbol, PERIOD_CURRENT, MaPeriod, 0, MaMethod, MaAppliedPrice, i) - tmBuffer[i];
-    if (i > (Bars - HalfLength - 1)) continue;
+    double diff =
+        iMA(_Symbol, PERIOD_CURRENT, MaPeriod, 0, MaMethod, MaAppliedPrice, i) -
+        tmBuffer[i];
+    if (i > (Bars - HalfLength - 1))
+      continue;
     if (i == (Bars - HalfLength - 1)) {
       upBuffer[i] = tmBuffer[i];
       dnBuffer[i] = tmBuffer[i];
 
-//      Print("Setting value into wdBuffer[", i, "] where ArraySize(wdBuffer) = ", ArraySize(wdBuffer));
+      //      Print("Setting value into wdBuffer[", i, "] where
+      //      ArraySize(wdBuffer) = ", ArraySize(wdBuffer));
 
       if (diff >= 0) {
         wuBuffer[i] = MathPow(diff, 2);
@@ -319,15 +350,17 @@ bool calculateTma(int limit) {
     //
 
     if (diff >= 0) {
-      wuBuffer[i] = (wuBuffer[i + 1] * (FullLength - 1) + MathPow(diff, 2)) / FullLength;
+      wuBuffer[i] =
+          (wuBuffer[i + 1] * (FullLength - 1) + MathPow(diff, 2)) / FullLength;
       wdBuffer[i] = wdBuffer[i + 1] * (FullLength - 1) / FullLength;
     } else {
-      wdBuffer[i] = (wdBuffer[i + 1] * (FullLength - 1) + MathPow(diff, 2)) / FullLength;
+      wdBuffer[i] =
+          (wdBuffer[i + 1] * (FullLength - 1) + MathPow(diff, 2)) / FullLength;
       wuBuffer[i] = wuBuffer[i + 1] * (FullLength - 1) / FullLength;
     }
     upBuffer[i] = tmBuffer[i] + BandsDeviations * MathSqrt(wuBuffer[i]);
     dnBuffer[i] = tmBuffer[i] - BandsDeviations * MathSqrt(wdBuffer[i]);
-    
+
     Print("upBuffer[", i, "] = ", DoubleToString(upBuffer[i]));
     Print("dnBuffer[", i, "] = ", DoubleToString(dnBuffer[i]));
     Print("wuBuffer[", i, "] = ", DoubleToString(wuBuffer[i]));
@@ -335,7 +368,7 @@ bool calculateTma(int limit) {
     Print(" upArrow[", i, "] = ", DoubleToString(upArrow[i]));
     Print(" dnArrow[", i, "] = ", DoubleToString(dnArrow[i]));
   }
-  
+
   return true;
 }
 
@@ -363,10 +396,15 @@ void doAlert(string doWhat) {
     previousAlert = doWhat;
     previousTime = Time[0];
 
-    message = StringFormat("%s at %s; THA: %s", _Symbol, TimeToStr(TimeLocal(), TIME_SECONDS), doWhat);
-    if (alertsEmail) SendMail(StringFormat("%s %s", _Symbol, "TMA"), message);
-    if (alertsMessage) Alert(message);
-    if (alertsNotification) SendNotification(message);
-    if (alertsSound) PlaySound("alert2.wav");
+    message = StringFormat("%s at %s; THA: %s", _Symbol,
+                           TimeToStr(TimeLocal(), TIME_SECONDS), doWhat);
+    if (alertsEmail)
+      SendMail(StringFormat("%s %s", _Symbol, "TMA"), message);
+    if (alertsMessage)
+      Alert(message);
+    if (alertsNotification)
+      SendNotification(message);
+    if (alertsSound)
+      PlaySound("alert2.wav");
   }
 }

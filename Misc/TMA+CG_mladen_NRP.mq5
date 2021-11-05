@@ -36,7 +36,7 @@
 // Custom indicator initialization function.
 void OnInit() {
   init();
- 
+
   bool as_series = true;
 
   ArraySetAsSeries(tmBuffer, as_series);
@@ -50,14 +50,15 @@ void OnInit() {
   PlotIndexSetInteger(0, PLOT_DRAW_BEGIN, AtrPeriod);
   PlotIndexSetInteger(1, PLOT_DRAW_BEGIN, AtrPeriod);
   PlotIndexSetInteger(2, PLOT_DRAW_BEGIN, AtrPeriod);
-  
+
   SetIndexStyle(0, DRAW_LINE);
   SetIndexStyle(1, DRAW_LINE);
   SetIndexStyle(2, DRAW_LINE);
 }
 
 // Custom indicator iteration function.
-int OnCalculate(const int rates_total, const int prev_calculated, const int begin, const double &price[]) {
+int OnCalculate(const int rates_total, const int prev_calculated,
+                const int begin, const double &price[]) {
   ResetLastError();
   return IndicatorCounted(start() == -1 ? 0 : rates_total);
 }
