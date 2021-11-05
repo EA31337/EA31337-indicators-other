@@ -5,7 +5,7 @@
 
 // Defines indicator properties.
 #property indicator_chart_window
-#property indicator_buffers 5
+#property indicator_buffers 7
 #property indicator_plots 5
 #property indicator_color1 clrNONE
 #property indicator_color2 Coral
@@ -26,8 +26,9 @@
 
 // Defines macros.
 #define extern input
+#define Bars fmin(2000, (ChartStatic::iBars(_Symbol, _Period)))
 #define iCustom iCustom5
-#define Bars fmin(10000, (ChartStatic::iBars(_Symbol, _Period)))
+//#define Bars ChartStatic::iBars(_Symbol, _Period)
 
 // Includes the main file.
 #include "TMA+CG_mladen_NRP.mq4"
@@ -35,24 +36,29 @@
 // Custom indicator initialization function.
 void OnInit() {
   init();
+
+  bool as_series = true;
+
+  ArraySetAsSeries(tmBuffer, as_series);
+  ArraySetAsSeries(upBuffer, as_series);
+  ArraySetAsSeries(dnBuffer, as_series);
+  ArraySetAsSeries(dnArrow, as_series);
+  ArraySetAsSeries(upArrow, as_series);
+  ArraySetAsSeries(wuBuffer, as_series);
+  ArraySetAsSeries(wdBuffer, as_series);
+
   PlotIndexSetInteger(0, PLOT_DRAW_BEGIN, AtrPeriod);
   PlotIndexSetInteger(1, PLOT_DRAW_BEGIN, AtrPeriod);
   PlotIndexSetInteger(2, PLOT_DRAW_BEGIN, AtrPeriod);
-  if (!ArrayGetAsSeries(tmBuffer)) {
-    ArraySetAsSeries(tmBuffer, true);
-    ArraySetAsSeries(upBuffer, true);
-    ArraySetAsSeries(dnBuffer, true);
-    ArraySetAsSeries(dnArrow, true);
-    ArraySetAsSeries(upArrow, true);
-    ArraySetAsSeries(wuBuffer, true);
-    ArraySetAsSeries(wdBuffer, true);
-  }
+
+  SetIndexStyle(0, DRAW_LINE);
+  SetIndexStyle(1, DRAW_LINE);
+  SetIndexStyle(2, DRAW_LINE);
 }
 
 // Custom indicator iteration function.
 int OnCalculate(const int rates_total, const int prev_calculated,
                 const int begin, const double &price[]) {
-  IndicatorCounted(prev_calculated);
   ResetLastError();
-  return start() >= 0 ? rates_total : 0;
+  return IndicatorCounted(start() == -1 ? 0 : rates_total);
 }
