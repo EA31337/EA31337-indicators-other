@@ -9,7 +9,6 @@
 
 #property indicator_chart_window
 #property indicator_buffers 7
-#property indicator_plots 5
 #property indicator_color1 clrNONE
 #property indicator_color2 Coral
 #property indicator_color3 Coral
@@ -123,7 +122,7 @@ int start() {
     return (-1);
   if (counted_bars > 0)
     counted_bars--;
-  limit = MathMin(Bars - 2, Bars - counted_bars + HalfLength);
+  limit = MathMin(Bars - AtrPeriod, Bars - counted_bars + HalfLength);
 
   if (ReturnBars) {
     tmBuffer[0] = limit;
@@ -138,13 +137,7 @@ int start() {
   // false, true); limit = MathMax(limit, MathMin(Bars - 1, _bar_limit *
   // PERIOD_CURRENT / Period()));
 
-  //
-  //
-  //
-  //
-  //
-  if (limit < Bars - 20)
-    limit = 1;
+  limit = limit > Bars - AtrPeriod ? limit : 1;
   for (i = limit; i >= 0; i--) {
     int shift1 = iBarShift(_Symbol, PERIOD_CURRENT, Time[i]);
     datetime time1 = iTime(_Symbol, PERIOD_CURRENT, shift1);
@@ -154,8 +147,6 @@ int start() {
     //
     //
     //
-
-    int handle = NULL;
 
     tmBuffer[i] =
         iCustom(_Symbol, PERIOD_CURRENT, IndicatorFileName, true, false,
@@ -174,14 +165,16 @@ int start() {
 
     double _atr = iATR(_Symbol, PERIOD_CURRENT, AtrPeriod, i);
 
+#ifdef __debug__
     Print("iCustoms: #0 = ", DoubleToString(tmBuffer[i]),
           ", #1 = ", DoubleToString(upBuffer[i]),
           ", #2 = ", DoubleToString(dnBuffer[i]), ", Error = ", _LastError);
+#endif
 
     if (GetLastError() != ERR_NO_ERROR) {
-      // Missing data for iATR.
+      // Ignore missing indicator data.
       ResetLastError();
-      return -1;
+      continue;
     }
 
     upArrow[i] = EMPTY_VALUE;
@@ -288,15 +281,16 @@ bool calculateTma(int limit) {
     double sum = (HalfLength + 1) * iMA(_Symbol, PERIOD_CURRENT, MaPeriod, 0,
                                         MaMethod, MaAppliedPrice, i);
     double sumw = (HalfLength + 1);
+
+    if (GetLastError() != ERR_NO_ERROR) {
+      // Ignore missing indicator data.
+      ResetLastError();
+      continue;
+    }
+
     for (j = 1, k = HalfLength; j <= HalfLength; j++, k--) {
       sum += k * iMA(_Symbol, PERIOD_CURRENT, MaPeriod, 0, MaMethod,
                      MaAppliedPrice, i + j);
-
-      if (GetLastError() != ERR_NO_ERROR) {
-        // Missing data for iMA.
-        ResetLastError();
-        return false;
-      }
 
       sumw += k;
 
@@ -361,12 +355,14 @@ bool calculateTma(int limit) {
     upBuffer[i] = tmBuffer[i] + BandsDeviations * MathSqrt(wuBuffer[i]);
     dnBuffer[i] = tmBuffer[i] - BandsDeviations * MathSqrt(wdBuffer[i]);
 
+#ifdef __debug__
     Print("upBuffer[", i, "] = ", DoubleToString(upBuffer[i]));
     Print("dnBuffer[", i, "] = ", DoubleToString(dnBuffer[i]));
     Print("wuBuffer[", i, "] = ", DoubleToString(wuBuffer[i]));
     Print("wdBuffer[", i, "] = ", DoubleToString(wdBuffer[i]));
     Print(" upArrow[", i, "] = ", DoubleToString(upArrow[i]));
     Print(" dnArrow[", i, "] = ", DoubleToString(dnArrow[i]));
+#endif
   }
 
   return true;

@@ -19,16 +19,15 @@
 #property indicator_width5 2
 
 // Includes EA31337 framework.
-#include <EA31337-classes/Chart.mqh>
 #include <EA31337-classes/Indicator.mqh>
 #include <EA31337-classes/Indicators/Indi_ATR.mqh>
 #include <EA31337-classes/Indicators/Indi_MA.mqh>
 
 // Defines macros.
+//#define __debug__
 #define extern input
 #define Bars fmin(2000, (ChartStatic::iBars(_Symbol, _Period)))
 #define iCustom iCustom5
-//#define Bars ChartStatic::iBars(_Symbol, _Period)
 
 // Includes the main file.
 #include "TMA+CG_mladen_NRP.mq4"
@@ -59,6 +58,7 @@ void OnInit() {
 // Custom indicator iteration function.
 int OnCalculate(const int rates_total, const int prev_calculated,
                 const int begin, const double &price[]) {
+  IndicatorCounted(fmin(prev_calculated, Bars));
   ResetLastError();
-  return IndicatorCounted(start() == -1 ? 0 : rates_total);
+  return start() >= 0 ? rates_total : 0;
 }
