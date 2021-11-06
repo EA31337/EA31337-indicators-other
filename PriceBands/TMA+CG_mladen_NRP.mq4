@@ -137,7 +137,6 @@ int start() {
   // false, true); limit = MathMax(limit, MathMin(Bars - 1, _bar_limit *
   // PERIOD_CURRENT / Period()));
 
-  limit = limit > Bars - AtrPeriod ? limit : 1;
   for (i = limit; i >= 0; i--) {
     int shift1 = iBarShift(_Symbol, PERIOD_CURRENT, Time[i]);
     datetime time1 = iTime(_Symbol, PERIOD_CURRENT, shift1);
