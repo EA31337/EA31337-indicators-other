@@ -7,11 +7,9 @@
 #property indicator_buffers 2
 #property indicator_plots 2
 #property indicator_separate_window
-//#property indicator_plots 2
 #property indicator_color1 LawnGreen
 #property indicator_color2 Red
 // Includes EA31337 framework.
-#include <EA31337-classes/Draw.mqh>
 #include <EA31337-classes/Indicator.mqh>
 #include <EA31337-classes/Indicators/Indi_MA.mqh>
 
