@@ -17,16 +17,16 @@
 #property indicator_type1 DRAW_LINE
 #property indicator_type2 DRAW_LINE
 #property indicator_type3 DRAW_LINE
-#property indicator_style1 STYLE_DOT
-#property indicator_style2 STYLE_SOLID
-#property indicator_style3 STYLE_SOLID
+#property indicator_style1 STYLE_SOLID
+#property indicator_style2 STYLE_DOT
+#property indicator_style3 STYLE_DOT
 #property indicator_width1 2
+#property indicator_width2 1
+#property indicator_width3 1
 
 // Includes EA31337 framework.
 #include <EA31337-classes/Indicator.mqh>
 #include <EA31337-classes/Indicators/Indi_MA.mqh>
-#include <EA31337-classes/Storage/ValueStorage.h>
-
 // Defines macros.
 #define extern input
 #define Bars (ChartStatic::iBars(_Symbol, _Period))
@@ -43,15 +43,12 @@ void OnInit() {
   PlotIndexSetString(0, PLOT_LABEL, "SVEBB Middle");
   PlotIndexSetString(1, PLOT_LABEL, "SVEBB Upper");
   PlotIndexSetString(2, PLOT_LABEL, "SVEBB Lower");
-  SetIndexStyle(0, DRAW_HISTOGRAM, STYLE_SOLID, 1);
-  SetIndexStyle(1, DRAW_HISTOGRAM, STYLE_DOT, 1);
-  SetIndexStyle(2, DRAW_HISTOGRAM, STYLE_DOT, 1);
 }
 
 // Custom indicator iteration function.
-int OnCalculate(const int rates_total, const int prev_calculated, const int begin, const double &price[]) {
-  int pos = fmax(0, prev_calculated - 1);
-  IndicatorCounted(prev_calculated);
-  start();
-  return (rates_total);
+int OnCalculate(const int rates_total, const int prev_calculated,
+                const int begin, const double &price[]) {
+  IndicatorCounted(fmin(prev_calculated, Bars));
+  ResetLastError();
+  return start() >= 0 ? rates_total : 0;
 }

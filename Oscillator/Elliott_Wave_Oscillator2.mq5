@@ -7,11 +7,9 @@
 #property indicator_buffers 2
 #property indicator_plots 2
 #property indicator_separate_window
-//#property indicator_plots 2
 #property indicator_color1 LawnGreen
 #property indicator_color2 Red
 // Includes EA31337 framework.
-#include <EA31337-classes/Draw.mqh>
 #include <EA31337-classes/Indicator.mqh>
 #include <EA31337-classes/Indicators/Indi_MA.mqh>
 
@@ -34,9 +32,9 @@ void OnInit() {
 }
 
 // Custom indicator iteration function.
-int OnCalculate(const int rates_total, const int prev_calculated, const int begin, const double &price[]) {
-  int pos = fmax(0, prev_calculated - 1);
-  IndicatorCounted(prev_calculated);
-  start();
-  return (rates_total);
+int OnCalculate(const int rates_total, const int prev_calculated,
+                const int begin, const double &price[]) {
+  IndicatorCounted(fmin(prev_calculated, Bars));
+  ResetLastError();
+  return start() >= 0 ? rates_total : 0;
 }

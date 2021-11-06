@@ -90,6 +90,11 @@ int start() {
       dblTma = calcTmaMtf(gintTF, eintHalfLength, intBarShift, Close[inx]);
     }
 
+    if (GetLastError() != ERR_NO_ERROR) {
+      ResetLastError();
+      continue;
+    }
+
     gadblMid[inx] = dblTma;
     gadblUpper[inx] = dblTma + (edblAtrMultiplier * dblRange);
     gadblLower[inx] = dblTma - (edblAtrMultiplier * dblRange);
