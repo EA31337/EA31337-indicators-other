@@ -1,6 +1,6 @@
 # EA31337 indicators other
 
-<!--[![Tag][gh-tag-image]][gh-tag-link]-->
+[![Tag][gh-tag-image]][gh-tag-link]
 [![Channel][tg-channel-image]][tg-channel-link]
 [![Discuss][gh-discuss-badge]][gh-discuss-link]
 [![Status][gha-image-check-master]][gha-link-check-master]
