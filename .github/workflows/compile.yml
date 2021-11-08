@@ -19,31 +19,34 @@ on:
       - '.git*'
 
 jobs:
-  Compile:
+  Compile-MQL4:
     defaults:
       run:
         shell: powershell
     runs-on: windows-latest
+    strategy:
+      matrix:
+        file:
+          - Misc/TMA+CG_mladen_NRP_Histogram
+          - Oscillator/Elliott_Wave_Oscillator2
+          - Oscillator/SVE_Bollinger_Bands
+          - PriceBands/SAWA
+          - PriceBands/TMA+CG_mladen_NRP
+          - PriceBands/TMA_True
     steps:
       - uses: actions/checkout@v2
       - uses: actions/checkout@v2
         with:
           path: Include/EA31337-classes
-          ref: v2.009
+          ref: dev
           repository: EA31337/EA31337-classes
-      - name: Compile (build 2361)
+      - name: Compile
         uses: fx31337/mql-compile-action@master
         with:
           include: .
+          init-platform: true
           mt-version: 5.0.0.2361
-          path: .
-          verbose: true
-      - name: Compile (build 2515)
-        uses: fx31337/mql-compile-action@master
-        with:
-          include: .
-          mt-version: 5.0.0.2515
-          path: .
+          path: ${{ matrix.file }}.mq4
           verbose: true
       - name: List compiled files
         run: '(Get-ChildItem -Recurse -Path . -Include *.ex[45]).fullname'
@@ -51,5 +54,44 @@ jobs:
       - name: Upload indicator artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: Indicators-other
+          name: Indicators
+          path: '*/*.ex?'
+  Compile-MQL5:
+    defaults:
+      run:
+        shell: powershell
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        file:
+          - Misc/ATR_MA_Trend
+          - Misc/TMA+CG_mladen_NRP_Histogram
+          - Oscillator/Elliott_Wave_Oscillator2
+          - Oscillator/SVE_Bollinger_Bands
+          - Price/SuperTrend
+          - PriceBands/SAWA
+          - PriceBands/TMA+CG_mladen_NRP
+          - PriceBands/TMA_True
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+        with:
+          path: Include/EA31337-classes
+          ref: dev
+          repository: EA31337/EA31337-classes
+      - name: Compile
+        uses: fx31337/mql-compile-action@master
+        with:
+          include: .
+          init-platform: true
+          mt-version: 5.0.0.2515
+          path: ${{ matrix.file }}.mq5
+          verbose: true
+      - name: List compiled files
+        run: '(Get-ChildItem -Recurse -Path . -Include *.ex[45]).fullname'
+      - run: Get-Location
+      - name: Upload indicator artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: Indicators
           path: '*/*.ex?'
