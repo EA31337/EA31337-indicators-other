@@ -20,7 +20,7 @@
 
 // Based on rajivxxx, rajivxxx@gmail.com, edited by eevviill, no repaint"
 #property indicator_separate_window
-#property indicator_buffers 2
+#property indicator_buffers 3
 #property indicator_type1 DRAW_HISTOGRAM
 #property indicator_type2 DRAW_HISTOGRAM
 #property indicator_minimum 0
@@ -31,15 +31,15 @@ input int HalfLength = 61;
 input int Price = PRICE_WEIGHTED;
 input double BandsDeviations = 2.8;
 input bool Interpolate = true;
-input color up_color = Green;  // Up color
-input color down_color = Red;  // Down color
-input int bars_limit = 1000;   // Bars limit
+input color up_color = Green; // Up color
+input color down_color = Red; // Down color
+input int bars_limit = 1000;  // Bars limit
 
 // Stream v.3.0
 // More templates and snippets on https://github.com/sibvic/mq4-templates
 
 interface IStream {
- public:
+public:
   virtual void AddRef() = 0;
   virtual void Release() = 0;
   virtual int Size() = 0;
@@ -60,7 +60,7 @@ class InstrumentInfo {
   int _digits;
   double _tickSize;
 
- public:
+public:
   InstrumentInfo(const string symbol) {
     _symbol = symbol;
     _point = MarketInfo(symbol, MODE_POINT);
@@ -82,9 +82,13 @@ class InstrumentInfo {
     return res;
   }
 
-  static double GetBid(const string symbol) { return MarketInfo(symbol, MODE_BID); }
+  static double GetBid(const string symbol) {
+    return MarketInfo(symbol, MODE_BID);
+  }
   double GetBid() { return GetBid(_symbol); }
-  static double GetAsk(const string symbol) { return MarketInfo(symbol, MODE_ASK); }
+  static double GetAsk(const string symbol) {
+    return MarketInfo(symbol, MODE_ASK);
+  }
   double GetAsk() { return GetAsk(_symbol); }
   static double GetPipSize(const string symbol) {
     double point = MarketInfo(symbol, MODE_POINT);
@@ -100,10 +104,13 @@ class InstrumentInfo {
   double GetTickSize() { return _tickSize; }
   double GetMinLots() { return SymbolInfoDouble(_symbol, SYMBOL_VOLUME_MIN); };
 
-  double AddPips(const double rate, const double pips) { return RoundRate(rate + pips * _pipSize); }
+  double AddPips(const double rate, const double pips) {
+    return RoundRate(rate + pips * _pipSize);
+  }
 
   double RoundRate(const double rate) {
-    return NormalizeDouble(MathFloor(rate / _tickSize + 0.5) * _tickSize, _digits);
+    return NormalizeDouble(MathFloor(rate / _tickSize + 0.5) * _tickSize,
+                           _digits);
   }
 
   double RoundLots(const double lots) {
@@ -137,7 +144,7 @@ class InstrumentInfo {
 #ifndef AStream_IMP
 
 class AStream : public IStream {
- protected:
+protected:
   string _symbol;
   ENUM_TIMEFRAMES _timeframe;
   double _shift;
@@ -154,14 +161,15 @@ class AStream : public IStream {
 
   ~AStream() { delete _instrument; }
 
- public:
+public:
   void SetShift(const double shift) { _shift = shift; }
 
   void AddRef() { ++_references; }
 
   void Release() {
     --_references;
-    if (_references == 0) delete &this;
+    if (_references == 0)
+      delete &this;
   }
 
   int Size() { return iBars(_symbol, _timeframe); }
@@ -175,16 +183,17 @@ class AStream : public IStream {
 #define ColoredStream_IMP
 
 class ColoredStreamData {
- public:
+public:
   double Stream[];
 };
 
 class ColoredStream : public AStream {
- public:
+public:
   ColoredStreamData _streams[];
   double _data[];
 
-  ColoredStream(const string symbol, const ENUM_TIMEFRAMES timeframe) : AStream(symbol, timeframe) {}
+  ColoredStream(const string symbol, const ENUM_TIMEFRAMES timeframe)
+      : AStream(symbol, timeframe) {}
 
   void Init(double defaultValue) {
     for (int i = 0; i < ArraySize(_streams); ++i) {
@@ -199,20 +208,27 @@ class ColoredStream : public AStream {
     return id + 1;
   }
 
-  int RegisterStream(int id, color clr, string label = "", int lineType = DRAW_LINE,
+  int RegisterStream(int id, color clr, string label = "",
+                     int lineType = DRAW_LINE,
                      ENUM_LINE_STYLE lineStyle = STYLE_SOLID, int width = 1) {
     int size = ArraySize(_streams);
     ArrayResize(_streams, size + 1);
     SetIndexStyle(id, lineType, lineStyle, width, clr);
     SetIndexBuffer(id, _streams[size].Stream);
+#ifndef __MQL4__
+    ArraySetAsSeries(_streams[size].Stream, true);
+#endif
     SetIndexEmptyValue(id, EMPTY_VALUE);
-    if (label != "") SetIndexLabel(id, label);
+
+    if (label != "")
+      SetIndexLabel(id, label);
     return id + 1;
   }
 
   int GetColorIndex(int period) {
     for (int i = 0; i < ArraySize(_streams); ++i) {
-      if (_streams[i].Stream[period] != EMPTY_VALUE) return i;
+      if (_streams[i].Stream[period] != EMPTY_VALUE)
+        return i;
     }
     return -1;
   }
@@ -222,7 +238,8 @@ class ColoredStream : public AStream {
     for (int i = 0; i < ArraySize(_streams); ++i) {
       if (colorIndex == i) {
         _streams[i].Stream[period] = value;
-        if (period + 1 < iBars(_symbol, _timeframe) && _streams[i].Stream[period + 1] == EMPTY_VALUE)
+        if (period + 1 < iBars(_symbol, _timeframe) &&
+            _streams[i].Stream[period + 1] == EMPTY_VALUE)
           _streams[i].Stream[period + 1] = _data[period + 1];
       } else
         _streams[i].Stream[period] = EMPTY_VALUE;
@@ -259,8 +276,10 @@ int deinit() {
   return (0);
 }
 
-int OnCalculate(const int rates_total, const int prev_calculated, const datetime &time[], const double &open[],
-                const double &high[], const double &low[], const double &close[], const long &tick_volume[],
+int OnCalculate(const int rates_total, const int prev_calculated,
+                const datetime &time[], const double &open[],
+                const double &high[], const double &low[],
+                const double &close[], const long &tick_volume[],
                 const long &volume[], const int &spread[]) {
   if (prev_calculated <= 0 || prev_calculated > rates_total) {
     out.Init(EMPTY_VALUE);
@@ -279,16 +298,23 @@ int OnCalculate(const int rates_total, const int prev_calculated, const datetime
   ArraySetAsSeries(tick_volume, true);
 
   int toSkip = 1;
-  for (int pos = MathMin(bars_limit, rates_total - 1 - MathMax(prev_calculated, toSkip)); pos >= 0 && !IsStopped();
-       --pos) {
-    double upValue = iCustom(_Symbol, _Period, "TMA+CG mladen NRP", TimeFrame, HalfLength, Price, BandsDeviations,
-                             Interpolate, 3, pos);
+  for (int pos = MathMin(bars_limit,
+                         rates_total - 1 - MathMax(prev_calculated, toSkip));
+       pos >= 0 && !IsStopped(); --pos) {
+    double upValue =
+        iCustom(_Symbol, _Period, "TMA+CG_mladen_NRP", false, false, HalfLength,
+                20, BandsDeviations, Price, MODE_SMA, 1, 3, Interpolate, false,
+                false, false, 3, pos);
+
     int colorIndex = out.GetColorIndex(pos + 1);
     if (upValue != EMPTY_VALUE) {
       colorIndex = 0;
     }
-    double downValue = iCustom(_Symbol, _Period, "TMA+CG mladen NRP", TimeFrame, HalfLength, Price, BandsDeviations,
-                               Interpolate, 4, pos);
+    double downValue =
+        iCustom(_Symbol, _Period, "TMA+CG_mladen_NRP", false, false, HalfLength,
+                20, BandsDeviations, Price, MODE_SMA, 1, 3, Interpolate, false,
+                false, false, 4, pos);
+
     if (downValue != EMPTY_VALUE) {
       colorIndex = 1;
     }

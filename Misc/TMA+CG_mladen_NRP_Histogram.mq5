@@ -5,7 +5,7 @@
 
 // Defines indicator properties.
 #property indicator_separate_window
-#property indicator_buffers 2
+#property indicator_buffers 3
 #property indicator_plots 2
 #property indicator_type1 DRAW_HISTOGRAM
 #property indicator_type2 DRAW_HISTOGRAM
@@ -21,18 +21,10 @@
 #define extern input
 #define Bars fmin(10000, (ChartStatic::iBars(_Symbol, _Period)))
 
+#define iCustom iCustom5
+
 // Includes the main file.
 #include "TMA+CG_mladen_NRP_Histogram.mq4"
 
 // Custom indicator initialization function.
 void OnInit() { init(); }
-
-// Custom indicator iteration function.
-/*
-int OnCalculate(const int rates_total, const int prev_calculated, const int begin, const double &price[]) {
-  int pos = fmax(0, prev_calculated - 1);
-  IndicatorCounted(fmin(prev_calculated, Bars));
-  start();
-  return (rates_total);
-}
-*/
