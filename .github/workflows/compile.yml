@@ -59,6 +59,7 @@ jobs:
           path: ${{ matrix.file }}
           verbose: true
       - name: Compile (build 2515)
+        if: endsWith(matrix.file, '.mq5')
         uses: fx31337/mql-compile-action@master
         with:
           include: .
@@ -74,4 +75,3 @@ jobs:
         with:
           name: Indicators-other
           path: '**/*.ex?'
-
