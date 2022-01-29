@@ -19,11 +19,30 @@ on:
       - '.git*'
 
 jobs:
+  GetList:
+    outputs:
+      filelist: ${{ steps.get-files.outputs.filelist }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set output with list of files
+        id: get-files
+        run: |
+          import glob, json, os
+          files = glob.glob("**/*.mq?")
+          print("::set-output name=filelist::{}".format(json.dumps(files)))
+        shell: python
+      - name: Display output
+        run: echo ${{ steps.get-files.outputs.filelist }}
   Compile:
     defaults:
       run:
         shell: powershell
+    needs: [GetList]
     runs-on: windows-latest
+    strategy:
+      matrix:
+        file: ${{ fromJson(needs.GetList.outputs.filelist) }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/checkout@v2
@@ -37,7 +56,7 @@ jobs:
           include: .
           init-platform: true
           mt-version: 5.0.0.2361
-          path: '*/*.mq?'
+          path: ${{ matrix.file }}
           verbose: true
       - name: Compile (build 2515)
         uses: fx31337/mql-compile-action@master
@@ -45,7 +64,7 @@ jobs:
           include: .
           init-platform: true
           mt-version: 5.0.0.2515
-          path: '*/*.mq?'
+          path: ${{ matrix.file }}
           verbose: true
       - name: List compiled files
         run: '(Get-ChildItem -Recurse -Path . -Include *.ex[45]).fullname'
@@ -55,3 +74,4 @@ jobs:
         with:
           name: Indicators-other
           path: '**/*.ex?'
+
