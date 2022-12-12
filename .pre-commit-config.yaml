@@ -18,7 +18,6 @@ repos:
         exclude: (\.ico|\.mqproj)$
       - id: git-check     # Configure in .gitattributes
       # - id: markdownlint  # Configure in .mdlrc.style.rb
-      - id: require-ascii
 
   - repo: https://github.com/thibaudcolas/curlylint
     rev: v0.13.1
