@@ -6,6 +6,7 @@
 [![Discuss][gh-discuss-badge]][gh-discuss-link]
 [![Status][gha-image-check-master]][gha-link-check-master]
 [![Status][gha-image-compile-master]][gha-link-compile-master]
+[![Edit][gh-edit-badge]][gh-edit-link]
 
 ## About the project
 
@@ -19,16 +20,20 @@ Related project:
 
 ## Dependencies
 
-| Tag      | Classes    |
-|:--------:|:----------:|
-| v1.009   | v1.009     |
-| v1.010   | v1.010     |
-| v1.011   | v1.011.1   |
+| Tag      | Classes   |
+|:--------:|:---------:|
+| v1.009   | v1.009    |
+| v1.010   | v1.010    |
+| v1.011   | v1.011.1  |
+| v1.012   | v2.012.1  |
 
 <!-- Named links -->
 
 [gh-discuss-badge]: https://img.shields.io/badge/Discussions-Q&A-blue.svg?logo=github
 [gh-discuss-link]: https://github.com/EA31337/EA31337-indicators-other/discussions
+
+[gh-edit-badge]: https://img.shields.io/badge/GitHub-edit-purple.svg?logo=github
+[gh-edit-link]: https://github.dev/EA31337/EA31337-indicators-other
 
 [gh-issues]: https://github.com/EA31337/EA31337-indicators-other/issues
 
