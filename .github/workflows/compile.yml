@@ -44,11 +44,11 @@ jobs:
       matrix:
         file: ${{ fromJson(needs.GetList.outputs.filelist) }}
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
           path: Include/EA31337-classes
-          ref: v2.010
+          ref: v2.012.1
           repository: EA31337/EA31337-classes
       - name: Compile (build 2361)
         uses: fx31337/mql-compile-action@master
