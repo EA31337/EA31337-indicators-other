@@ -1,4 +1,3 @@
-
 #property indicator_chart_window
 #property indicator_buffers 5
 #property indicator_color1 Yellow
@@ -74,7 +73,7 @@ int start()
 
         PlotIndexSetDouble(0, PLOT_EMPTY_VALUE, 0.0);
         ChartOpen[i - 1] = LastPrice[i];
-        PlotIndexSetDouble(0, i - 1, ChartOpen[i - 1]);
+        // PlotIndexSetDouble(0, i - 1, ChartOpen[i - 1]);
     }
 
     if (TrendLine)
@@ -111,16 +110,16 @@ if (TrendLine)
 int TrendLineLowTD(int L1, int i, int Step, double St, int Col)
 {
     double price = ChartLow[i] + (ChartLow[L1] - ChartLow[i]) / (i - L1) * i;
-    ObjectSet("HHL_" + Step, OBJPROP_TIME1, Time[i]);
-    ObjectSet("LL_" + Step, OBJPROP_TIME2, Time[L1]);
-    ObjectCreate("HHL_" + Step, OBJ_HLINE, 0, 0, price);
-    ObjectSet("HHL_" + Step, OBJPROP_STYLE, St);
+    ObjectSet("HHL_" + (string)Step, OBJPROP_TIME1, Time[i]);
+    ObjectSet("LL_" + (string)Step, OBJPROP_TIME2, Time[L1]);
+    ObjectCreate("HHL_" + (string)Step, OBJ_HLINE, 0, 0, price);
+    ObjectSet("HHL_" + (string)Step, OBJPROP_STYLE, St);
 
-    ObjectSet("HHL_" + Step, OBJPROP_BACK, true); // Line added
-    ObjectSet("HHL_" + Step, OBJPROP_COLOR, LowerTrendLineColour);
+    ObjectSet("HHL_" + (string)Step, OBJPROP_BACK, true); // Line added
+    ObjectSet("HHL_" + (string)Step, OBJPROP_COLOR, LowerTrendLineColour);
     if (Step == 1)
-        ObjectSet("HHL_" + Step, OBJPROP_WIDTH, TrendLineWidth);
+        ObjectSet("HHL_" + (string)Step, OBJPROP_WIDTH, TrendLineWidth);
     else
-        ObjectSet("HHL_" + Step, OBJPROP_WIDTH, 1);
+        ObjectSet("HHL_" + (string)Step, OBJPROP_WIDTH, 1);
     return (0);
 }
