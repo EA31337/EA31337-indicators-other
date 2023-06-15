@@ -53,13 +53,13 @@ void OnInit() {
   PlotIndexSetString(2, PLOT_LABEL, "Low");
   PlotIndexSetString(3, PLOT_LABEL, "Close");
   PlotIndexSetString(4, PLOT_LABEL, "Price");
-  /*
-  if (!ArrayGetAsSeries(gadblMid)) {
-    ArraySetAsSeries(gadblMid, true);
-    ArraySetAsSeries(gadblUpper, true);
-    ArraySetAsSeries(gadblLower, true);
+  if (!ArrayGetAsSeries(ChartOpen)) {
+    ArraySetAsSeries(ChartOpen, true);
+    ArraySetAsSeries(ChartHigh, true);
+    ArraySetAsSeries(ChartLow, true);
+    ArraySetAsSeries(ChartClose, true);
+    ArraySetAsSeries(LastPrice, true);
   }
-  */
 }
 
 // Custom indicator iteration function.
