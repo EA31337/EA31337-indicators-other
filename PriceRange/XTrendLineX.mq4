@@ -45,7 +45,7 @@ int init()
 int start()
 {
     M2O = PeriodSeconds(Period()) / PeriodSeconds(Period()); // Calculate multiplier
-    BarNumber = iBars(NULL, 0); // Get number of bars in current offline chart
+    BarNumber = iBars(NULL, 0) - 1; // Get number of bars in current offline chart
 
     // Main loop for updating offline chart data
     for (int i = BarNumber; i > 0; i--)
@@ -90,7 +90,7 @@ for (int j = ObjectsTotal() - 1; j >= 0; j--)
 // Draw trendlines
 int numBars = iBars(NULL, 0);
 int stepSize = (int)MathPow(10, ChartPrecision); // Step size for trendline drawing
-int startBar = numBars - (int)MathCeil((double)numBars / stepSize) * stepSize;
+int startBar = (int)(numBars - MathCeil((double)numBars / stepSize * stepSize));
 int endBar = numBars - 1;
 
 if (TrendLine)
