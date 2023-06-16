@@ -8,10 +8,10 @@
 #property indicator_buffers 5
 #property indicator_plots 5
 #property indicator_color1 Yellow
-#property indicator_color2 Magenta    // Sell
-#property indicator_color3 DodgerBlue // Buy
-#property indicator_color4 LimeGreen  // Buy
-#property indicator_color5 Plum       // Buy
+#property indicator_color2 Magenta     // Sell
+#property indicator_color3 DodgerBlue  // Buy
+#property indicator_color4 LimeGreen   // Buy
+#property indicator_color5 Plum        // Buy
 #property indicator_label1 "Open"
 #property indicator_label2 "High"
 #property indicator_label3 "Low"
@@ -63,8 +63,7 @@ void OnInit() {
 }
 
 // Custom indicator iteration function.
-int OnCalculate(const int rates_total, const int prev_calculated,
-                const int begin, const double &price[]) {
+int OnCalculate(const int rates_total, const int prev_calculated, const int begin, const double &price[]) {
   IndicatorCounted(fmin(prev_calculated, Bars));
   ResetLastError();
   return start() >= 0 ? rates_total : 0;
