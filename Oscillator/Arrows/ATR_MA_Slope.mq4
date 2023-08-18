@@ -15,7 +15,10 @@ double Long[];
 double Short[];
 double Flat[];
 
-int OnInit() {
+//+------------------------------------------------------------------+
+//| Custom indicator initialization function                         |
+//+------------------------------------------------------------------+
+int init() {
   IndicatorShortName(WindowExpertName());
 
   SetIndexBuffer(0, Slope);
@@ -35,18 +38,16 @@ int OnInit() {
   SetIndexLabel(3, "Flat");
   SetIndexArrow(3, 159);
 
-  SetLevelStyle(STYLE_SOLID, 1, SlopeColor);
-  SetLevelValue(0, SlopeThreshold * 0.5);
-  SetLevelValue(1, -SlopeThreshold * 0.5);
+  // SetLevelStyle(STYLE_SOLID, 1, SlopeColor);
+  // SetLevelValue(0, SlopeThreshold * 0.5);
+  // SetLevelValue(1, -SlopeThreshold * 0.5);
 
   return (INIT_SUCCEEDED);
 }
 
-int OnCalculate(const int rates_total, const int prev_calculated,
-                const datetime &time[], const double &open[],
-                const double &high[], const double &low[],
-                const double &close[], const long &tick_volume[],
-                const long &volume[], const int &spread[]) {
+int start() {
+  int prev_calculated = IndicatorCounted();
+  int rates_total = Bars;
   int limit = MathMin(NumberOfBars, rates_total - prev_calculated);
   if (limit == rates_total)
     limit--;
@@ -55,15 +56,15 @@ int OnCalculate(const int rates_total, const int prev_calculated,
     Slope[shift] = 0;
 
     double dblTma, dblPrev;
-    double atr = iATR(NULL, Period(), SlopeATRPeriod, shift + 10) / 10;
+    double atr = iATR(NULL, PERIOD_CURRENT, SlopeATRPeriod, shift + 10) / 10;
 
     if (atr != 0) {
       dblTma =
-          iMA(NULL, Period(), SlopeMAPeriod, 0, MODE_LWMA, PRICE_CLOSE, shift);
-      dblPrev = (iMA(NULL, Period(), SlopeMAPeriod, 0, MODE_LWMA, PRICE_CLOSE,
+          iMA(NULL, PERIOD_CURRENT, SlopeMAPeriod, 0, MODE_LWMA, PRICE_CLOSE, shift);
+      dblPrev = (iMA(NULL, PERIOD_CURRENT, SlopeMAPeriod, 0, MODE_LWMA, PRICE_CLOSE,
                      shift + 1) *
                      231 +
-                 iClose(NULL, Period(), shift) * 20) /
+                 iClose(NULL, (int)PERIOD_CURRENT, shift) * 20) /
                 251;
       Slope[shift] = (dblTma - dblPrev) / atr;
     }
@@ -80,5 +81,5 @@ int OnCalculate(const int rates_total, const int prev_calculated,
       Flat[shift] = Slope[shift];
   }
 
-  return (rates_total);
+  return (0);
 }
