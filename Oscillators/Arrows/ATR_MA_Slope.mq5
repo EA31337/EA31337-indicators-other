@@ -26,7 +26,7 @@
 #property indicator_color4 Gray
 #property indicator_label4 "Flat"
 
-#property indicator_level1 Gray
+#property indicator_level1 0.0
 
 // Includes EA31337 framework.
 #include <EA31337-classes/Draw.mqh>
@@ -50,6 +50,13 @@ void OnInit() {
     ArraySetAsSeries(Short, true);
     ArraySetAsSeries(Flat, true);
   }
+  PlotIndexSetDouble(1, PLOT_EMPTY_VALUE, EMPTY_VALUE);
+  PlotIndexSetDouble(2, PLOT_EMPTY_VALUE, EMPTY_VALUE);
+  PlotIndexSetDouble(3, PLOT_EMPTY_VALUE, EMPTY_VALUE);
+  PlotIndexSetInteger(0, PLOT_DRAW_BEGIN, SlopeMAPeriod);
+  PlotIndexSetInteger(1, PLOT_DRAW_BEGIN, SlopeMAPeriod);
+  PlotIndexSetInteger(2, PLOT_DRAW_BEGIN, SlopeMAPeriod);
+  PlotIndexSetInteger(3, PLOT_DRAW_BEGIN, SlopeMAPeriod);
 }
 
 // Custom indicator iteration function.
