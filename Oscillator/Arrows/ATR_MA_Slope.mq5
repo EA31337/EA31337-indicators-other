@@ -10,19 +10,19 @@
 #property indicator_plots 4
 
 // Define indicator properties
-#property indicator_type1  DRAW_LINE
+#property indicator_type1 DRAW_LINE
 #property indicator_color1 Gray
 #property indicator_label1 "Slope"
 
-#property indicator_type2  DRAW_ARROW
+#property indicator_type2 DRAW_ARROW
 #property indicator_color2 Lime
 #property indicator_label2 "Long"
 
-#property indicator_type3  DRAW_ARROW
+#property indicator_type3 DRAW_ARROW
 #property indicator_color3 Red
 #property indicator_label3 "Short"
 
-#property indicator_type4  DRAW_ARROW
+#property indicator_type4 DRAW_ARROW
 #property indicator_color4 Gray
 #property indicator_label4 "Flat"
 
@@ -53,7 +53,8 @@ void OnInit() {
 }
 
 // Custom indicator iteration function.
-int OnCalculate(const int rates_total, const int prev_calculated, const int begin, const double &price[]) {
+int OnCalculate(const int rates_total, const int prev_calculated,
+                const int begin, const double &price[]) {
   IndicatorCounted(fmin(prev_calculated, Bars));
   ResetLastError();
   return start() >= 0 ? rates_total : 0;

@@ -59,10 +59,10 @@ int start() {
     double atr = iATR(NULL, PERIOD_CURRENT, SlopeATRPeriod, shift + 10) / 10;
 
     if (atr != 0) {
-      dblTma =
-          iMA(NULL, PERIOD_CURRENT, SlopeMAPeriod, 0, MODE_LWMA, PRICE_CLOSE, shift);
-      dblPrev = (iMA(NULL, PERIOD_CURRENT, SlopeMAPeriod, 0, MODE_LWMA, PRICE_CLOSE,
-                     shift + 1) *
+      dblTma = iMA(NULL, PERIOD_CURRENT, SlopeMAPeriod, 0, MODE_LWMA,
+                   PRICE_CLOSE, shift);
+      dblPrev = (iMA(NULL, PERIOD_CURRENT, SlopeMAPeriod, 0, MODE_LWMA,
+                     PRICE_CLOSE, shift + 1) *
                      231 +
                  iClose(NULL, (int)PERIOD_CURRENT, shift) * 20) /
                 251;
