@@ -45,19 +45,17 @@
 
 // Define global functions.
 #undef DoubleToStr
-string DoubleToStr(double _value) {
-   return ::DoubleToString(value);
-}
+string DoubleToStr(double _value) { return ::DoubleToString(value); }
 string DoubleToStr(double _value, int _digits) {
-   return ::DoubleToString(value, _digits);
+  return ::DoubleToString(value, _digits);
 }
 int WindowsTotal(const long _cid = 0) {
-   long result = -1;
-   ResetLastError();
-   if (!ChartGetInteger(chart_ID, CHART_WINDOWS_TOTAL, 0, result)) {
-      Print(__FUNCTION__ + "(): Error code = ", GetLastError());
-   }
-   return (int)result;
+  long result = -1;
+  ResetLastError();
+  if (!ChartGetInteger(chart_ID, CHART_WINDOWS_TOTAL, 0, result)) {
+    Print(__FUNCTION__ + "(): Error code = ", GetLastError());
+  }
+  return (int)result;
 }
 
 // Includes the main file.
