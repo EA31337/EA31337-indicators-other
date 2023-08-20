@@ -82,7 +82,7 @@ int start() {
     // Draw trendlines
     int numBars = iBars(NULL, 0);
     int stepSize = (int)MathPow(10, ChartPrecision);  // Step size for trendline drawing
-    int startBar = (int)(numBars - MathCeil((double)numBars / stepSize * stepSize));
+    int startBar = (int)(numBars - MathFloor((double)numBars / stepSize * stepSize));
     int endBar = numBars - 1;
 
     if (TrendLine) {
