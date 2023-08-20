@@ -29,9 +29,10 @@ jobs:
         id: get-files
         run: |
           import glob, json, os
-          file = os.environ["GITHUB_OUTPUT"]
-          filelist = "filelist={}".format(json.dumps(glob.glob("**/*.mq?")))
-          with open(file, "a") as fd:
+          fghout = os.environ["GITHUB_OUTPUT"]
+          files = glob.glob("**/*.mq?", recursive=True)
+          filelist = "filelist={}".format(json.dumps(files))
+          with open(fghout, "a") as fd:
             fd.write(filelist)
         shell: python
       - name: Display outputs
