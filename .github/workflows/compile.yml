@@ -29,11 +29,13 @@ jobs:
         id: get-files
         run: |
           import glob, json, os
-          files = glob.glob("**/*.mq?")
-          print("::set-output name=filelist::{}".format(json.dumps(files)))
+          file = os.environ["GITHUB_OUTPUT"]
+          filelist = "filelist={}".format(json.dumps(glob.glob("**/*.mq?")))
+          with open(file, "a") as fd:
+            fd.write(filelist)
         shell: python
-      - name: Display output
-        run: echo ${{ steps.get-files.outputs.filelist }}
+      - name: Display outputs
+        run: echo "${{ toJson(steps.get-files.outputs) }}"
   Compile:
     defaults:
       run:
