@@ -26,16 +26,16 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set output with list of files
-        env:
-          GITHUB_OUTPUT: test
         id: get-files
         run: |
           import glob, json, os
-          files = glob.glob("**/*.mq?")
-          os.environ["GITHUB_OUTPUT"] = "filelist={}".format(json.dumps(files))
+          file = os.environ["GITHUB_OUTPUT"]
+          filelist = "filelist={}".format(json.dumps(glob.glob("**/*.mq?")))
+          with open(file, "a") as fd:
+            fd.write(filelist)
         shell: python
       - name: Display outputs
-        run: echo ${{ toJson(steps.get-files.outputs) }}
+        run: echo "${{ toJson(steps.get-files.outputs) }}"
   Compile:
     defaults:
       run:
