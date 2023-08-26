@@ -164,13 +164,16 @@ int start()
   }
 
 double StDev(double& Data[], int Per)
-{return(MathSqrt(Variance(Data,Per)));
+{
+  return(MathSqrt(Variance(Data,Per)));
 }
 double Variance(double& Data[], int Per)
-{double sum, ssum;
+{
+  double sum = 0.0, ssum = 0.0;
   for (int i=0; i<Per; i++)
-  {sum += Data[i];
-   ssum += MathPow(Data[i],2);
+  {
+    sum += Data[i];
+    ssum += MathPow(Data[i],2);
   }
   return((ssum*Per - sum*sum)/(Per*(Per-1)));
 }
