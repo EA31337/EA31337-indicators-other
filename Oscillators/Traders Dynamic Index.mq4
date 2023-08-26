@@ -140,8 +140,9 @@ int start()
    double MA,RSI[];
    ArrayResize(RSI,Volatility_Band);
    int counted_bars=IndicatorCounted();
+   int i;
    int limit = Bars-counted_bars-1;
-   for(int i=limit; i>=0; i--)
+   for(i=limit; i>=0; i--)
    {
       RSIBuf[i] = (iRSI(NULL,0,RSI_Period,RSI_Price,i));
       MA = 0;
