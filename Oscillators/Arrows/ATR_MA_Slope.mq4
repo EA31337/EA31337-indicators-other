@@ -38,9 +38,11 @@ int init() {
   SetIndexLabel(3, "Flat");
   SetIndexArrow(3, 159);
 
-  // SetLevelStyle(STYLE_SOLID, 1, SlopeColor);
-  // SetLevelValue(0, SlopeThreshold * 0.5);
-  // SetLevelValue(1, -SlopeThreshold * 0.5);
+#ifdef __MQL4__
+  SetLevelStyle(STYLE_SOLID, 1, SlopeColor);
+  SetLevelValue(0, SlopeThreshold * 0.5);
+  SetLevelValue(1, -SlopeThreshold * 0.5);
+#endif
 
   return (INIT_SUCCEEDED);
 }
