@@ -6,11 +6,10 @@
 // Defines indicator properties.
 #property indicator_chart_window
 #property indicator_buffers 8
-#property indicator_plots 4
-#property indicator_color1 LightSalmon
-#property indicator_color2 Lime
-#property indicator_color3 LightSalmon
-#property indicator_color4 Lime
+#property indicator_plots   1
+#property indicator_type1   DRAW_COLOR_CANDLES
+#property indicator_color1  DodgerBlue, Red
+#property indicator_label1  "Heiken Ashi Open;Heiken Ashi High;Heiken Ashi Low;Heiken Ashi Close"
 
 // Includes EA31337 framework.
 #include <EA31337-classes/Indicator.mqh>
