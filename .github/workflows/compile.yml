@@ -29,11 +29,14 @@ jobs:
         id: get-files
         run: |
           import glob, json, os
-          files = glob.glob("**/*.mq?")
-          print("::set-output name=filelist::{}".format(json.dumps(files)))
+          fghout = os.environ["GITHUB_OUTPUT"]
+          files = glob.glob("**/*.mq?", recursive=True)
+          filelist = "filelist={}".format(json.dumps(files))
+          with open(fghout, "a") as fd:
+            fd.write(filelist)
         shell: python
-      - name: Display output
-        run: echo ${{ steps.get-files.outputs.filelist }}
+      - name: Display outputs
+        run: echo "${{ toJson(steps.get-files.outputs) }}"
   Compile:
     defaults:
       run:
@@ -48,7 +51,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           path: Include/EA31337-classes
-          ref: v2.012.1
+          ref: v3.000.1
           repository: EA31337/EA31337-classes
       - name: Compile (build 2361)
         uses: fx31337/mql-compile-action@master
@@ -71,7 +74,7 @@ jobs:
         run: '(Get-ChildItem -Recurse -Path . -Include *.ex[45]).fullname'
       - run: Get-Location
       - name: Upload indicator artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: Indicators-other
           path: '**/*.ex?'
