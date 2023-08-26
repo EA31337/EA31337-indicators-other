@@ -1,10 +1,10 @@
 /*------------------------------------------------------------------------------------
    Name: TDI-RT-Clone.mq4
-   
-   Description: A clone of the TDI indicator. 
-                The volatility bands and the market base line are not exactly the same 
-                but they are close enough. 
-                	          
+
+   Description: A clone of the TDI indicator.
+                The volatility bands and the market base line are not exactly the same
+                but they are close enough.
+
 -------------------------------------------------------------------------------------*/
 // Indicator properties
 #property copyright "www.xaphod.com"
@@ -37,13 +37,13 @@
 #define INDICATOR_NAME "TDI-RT-Clone"
 
 // Indicator parameters
-extern int                RSI_Period=13;            
-extern ENUM_APPLIED_PRICE RSI_Price=PRICE_CLOSE; 
+extern int                RSI_Period=13;
+extern ENUM_APPLIED_PRICE RSI_Price=PRICE_CLOSE;
 extern int                Volatility_Band=34;
-extern int                RSISignal_Period=2;   
+extern int                RSISignal_Period=2;
 extern ENUM_MA_METHOD     RSISignal_Mode=MODE_SMA;
-extern int                TradeSignal_Period=7;      
-extern ENUM_MA_METHOD     TradeSignal_Mode=MODE_SMA; 
+extern int                TradeSignal_Period=7;
+extern ENUM_MA_METHOD     TradeSignal_Mode=MODE_SMA;
 
 
 // Global module varables
@@ -62,10 +62,10 @@ double gdaVolaBtm[];
 int init() {
   SetIndexStyle(0, DRAW_LINE);
   SetIndexBuffer(0, gdaVolaTop);
-  SetIndexLabel(0,"Volatility Top");   
+  SetIndexLabel(0,"Volatility Top");
   SetIndexStyle(1, DRAW_LINE);
   SetIndexBuffer(1, gdaVolaBtm);
-  SetIndexLabel(1,"Volatility Bottom");   
+  SetIndexLabel(1,"Volatility Bottom");
   SetIndexStyle(2, DRAW_LINE);
   SetIndexBuffer(2, gdaMktBase);
   SetIndexLabel(3,"Market Base");
@@ -74,8 +74,8 @@ int init() {
   SetIndexLabel(3,"Trade Signal");
   SetIndexStyle(4, DRAW_LINE);
   SetIndexBuffer(4, gdaRSISig);
-  SetIndexLabel(4,"RSI Signal");   
-  
+  SetIndexLabel(4,"RSI Signal");
+
   SetIndexStyle(5, DRAW_NONE);
   SetIndexBuffer(5, gdaRSI);
   SetIndexLabel(5,NULL);
@@ -98,25 +98,25 @@ int deinit() {
 // Description: Custom indicator iteration function.
 //-----------------------------------------------------------------------------
 int start() {
-  int iNewBars, iCountedBars, i;  
-  
+  int iNewBars, iCountedBars, i;
+
   // Get unprocessed bars
   iCountedBars=IndicatorCounted();
-  if(iCountedBars < 0) return (-1); 
+  if(iCountedBars < 0) return (-1);
   if(iCountedBars>0) iCountedBars--;
   iNewBars=MathMin(Bars-iCountedBars, Bars-1);
 
   // Calc TDI data
   for(i=iNewBars-1; i>=0; i--) {
-    gdaRSI[i] = iRSI(NULL,0,RSI_Period,RSI_Price,i); 
+    gdaRSI[i] = iRSI(NULL,0,RSI_Period,RSI_Price,i);
   }
-  for(i=iNewBars-1; i>=0; i--) {  
+  for(i=iNewBars-1; i>=0; i--) {
     gdaRSISig[i]=iMAOnArray(gdaRSI,0,RSISignal_Period,0,RSISignal_Mode,i);
     gdaTradeSig[i]=iMAOnArray(gdaRSI,0,TradeSignal_Period,0,TradeSignal_Mode,i);
-    gdaMktBase[i]=iMAOnArray(gdaRSI,0,Volatility_Band,0,MODE_SMA,i);    
+    gdaMktBase[i]=iMAOnArray(gdaRSI,0,Volatility_Band,0,MODE_SMA,i);
     gdaVolaTop[i]=gdaMktBase[i]+1.6185 * iStdDevOnArray(gdaRSI,0,Volatility_Band,0,MODE_SMA,i);
     gdaVolaBtm[i]=gdaMktBase[i]-1.6185 * iStdDevOnArray(gdaRSI,0,Volatility_Band,0,MODE_SMA,i);
-  } 
+  }
   return(0);
 }
 //+------------------------------------------------------------------+
