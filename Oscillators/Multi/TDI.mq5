@@ -35,7 +35,7 @@
 #define TimeDayOfWeek (DateTime::DateOfWeek())
 
 // Includes the main file.
-#include "Traders Dynamic Index.mq4"
+#include "TDI.mq4"
 
 // Custom indicator initialization function.
 void OnInit() {
