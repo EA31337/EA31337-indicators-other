@@ -125,10 +125,12 @@ int init()
    SetIndexLabel(4,"RSI Price Line");
    SetIndexLabel(5,"Trade Signal Line");
 
+#ifdef __MQL4__
    SetLevelValue(0,50);
    SetLevelValue(1,68);
    SetLevelValue(2,32);
    SetLevelStyle(STYLE_DOT,1,DimGray);
+#endif
 
    return(0);
   }
