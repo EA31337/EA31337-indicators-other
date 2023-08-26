@@ -6,7 +6,6 @@
 // Defines indicator properties.
 #property indicator_separate_window
 
-
 #property indicator_buffers 6
 #property indicator_plots 5
 #property indicator_color1 clrBlue
@@ -34,7 +33,7 @@
 
 // Defines macros.
 #define extern input
-#define Bars (ChartStatic::iBars(_Symbol, _Period))
+#define Bars fmin(10000, (ChartStatic::iBars(_Symbol, _Period)))
 #define Bid (SymbolInfoStatic::GetBid(_Symbol))
 #define TimeDayOfWeek (DateTime::DateOfWeek())
 
