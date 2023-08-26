@@ -111,11 +111,11 @@ int start() {
     gdaRSI[i] = iRSI(NULL,0,RSI_Period,RSI_Price,i);
   }
   for(i=iNewBars-1; i>=0; i--) {
-    gdaRSISig[i]=iMAOnArray(gdaRSI,0,RSISignal_Period,0,RSISignal_Mode,i);
-    gdaTradeSig[i]=iMAOnArray(gdaRSI,0,TradeSignal_Period,0,TradeSignal_Mode,i);
-    gdaMktBase[i]=iMAOnArray(gdaRSI,0,Volatility_Band,0,MODE_SMA,i);
-    gdaVolaTop[i]=gdaMktBase[i]+1.6185 * iStdDevOnArray(gdaRSI,0,Volatility_Band,0,MODE_SMA,i);
-    gdaVolaBtm[i]=gdaMktBase[i]-1.6185 * iStdDevOnArray(gdaRSI,0,Volatility_Band,0,MODE_SMA,i);
+    gdaRSISig[i]=iMAOnArray(gdaRSI,iNewBars,RSISignal_Period,0,RSISignal_Mode,i);
+    gdaTradeSig[i]=iMAOnArray(gdaRSI,iNewBars,TradeSignal_Period,0,TradeSignal_Mode,i);
+    gdaMktBase[i]=iMAOnArray(gdaRSI,iNewBars,Volatility_Band,0,MODE_SMA,i);
+    gdaVolaTop[i]=gdaMktBase[i]+1.6185 * iStdDevOnArray(gdaRSI,iNewBars,Volatility_Band,0,MODE_SMA,i);
+    gdaVolaBtm[i]=gdaMktBase[i]-1.6185 * iStdDevOnArray(gdaRSI,iNewBars,Volatility_Band,0,MODE_SMA,i);
   }
   return(0);
 }
