@@ -26,6 +26,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          repository: EA31337/EA31337-indicators-other
       - name: Set output with list of files
         id: get-files
         run: |
@@ -49,6 +51,8 @@ jobs:
         file: ${{ fromJson(needs.GetList.outputs.filelist) }}
     steps:
       - uses: actions/checkout@v3
+        with:
+          repository: EA31337/EA31337-indicators-other
       - uses: actions/checkout@v3
         with:
           path: Include/EA31337-classes
