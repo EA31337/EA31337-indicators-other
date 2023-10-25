@@ -82,5 +82,5 @@ jobs:
       - name: Upload indicator artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: Indicators-other
-          path: '**/*.ex?'
+          name: indicators-other
+          path: '**/*.ex[45]'
