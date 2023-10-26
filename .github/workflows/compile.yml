@@ -20,7 +20,7 @@ on:
   workflow_call:
 
 env:
-  INDI_WORK_DIR: indicators-other
+  INDI_OTHER_WORKDIR: indicators-other
 
 jobs:
   Compile:
@@ -31,7 +31,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          path: "$INDI_WORK_DIR"
+          path: ${{ env.INDI_OTHER_WORKDIR }}
           ref: ${{ github.head_ref || github.ref_name }}
           repository: EA31337/EA31337-indicators-other
       - uses: actions/checkout@v3
@@ -45,7 +45,7 @@ jobs:
           include: .
           init-platform: true
           mt-version: 5.0.0.2361
-          path: "$INDI_WORK_DIR/**/*.mq?"
+          path: ${{ env.INDI_OTHER_WORKDIR }}/**/*.mq?
           verbose: true
       - name: Compile (build 2515)
         uses: fx31337/mql-compile-action@master
@@ -53,7 +53,7 @@ jobs:
           include: .
           init-platform: true
           mt-version: 5.0.0.2515
-          path: "$INDI_WORK_DIR/**/*.mq5"
+          path: ${{ env.INDI_OTHER_WORKDIR }}/**/*.mq5
           verbose: true
       - name: List compiled files
         run: '(Get-ChildItem -Recurse -Path . -Include *.ex[45]).fullname'
@@ -62,4 +62,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: indicators-other
-          path: "$INDI_WORK_DIR/**/*.ex[45]"
+          path: ${{ env.INDI_OTHER_WORKDIR }}/**/*.ex[45]
