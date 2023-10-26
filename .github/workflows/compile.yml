@@ -19,39 +19,19 @@ on:
       - '.git*'
   workflow_call:
 
+env:
+  INDI_WORK_DIR: indicators-other
+
 jobs:
-  GetList:
-    outputs:
-      filelist: ${{ steps.get-files.outputs.filelist }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          repository: EA31337/EA31337-indicators-other
-      - name: Set output with list of files
-        id: get-files
-        run: |
-          import glob, json, os
-          fghout = os.environ["GITHUB_OUTPUT"]
-          files = glob.glob("**/*.mq?", recursive=True)
-          filelist = "filelist={}".format(json.dumps(files))
-          with open(fghout, "a") as fd:
-            fd.write(filelist)
-        shell: python
-      - name: Display outputs
-        run: echo "${{ toJson(steps.get-files.outputs) }}"
   Compile:
     defaults:
       run:
         shell: powershell
-    needs: [GetList]
     runs-on: windows-latest
-    strategy:
-      matrix:
-        file: ${{ fromJson(needs.GetList.outputs.filelist) }}
     steps:
       - uses: actions/checkout@v3
         with:
+          path: "$INDI_WORK_DIR"
           ref: ${{ github.head_ref || github.ref_name }}
           repository: EA31337/EA31337-indicators-other
       - uses: actions/checkout@v3
@@ -65,16 +45,15 @@ jobs:
           include: .
           init-platform: true
           mt-version: 5.0.0.2361
-          path: ${{ matrix.file }}
+          path: "$INDI_WORK_DIR/**/*.mq?"
           verbose: true
       - name: Compile (build 2515)
-        if: endsWith(matrix.file, '.mq5')
         uses: fx31337/mql-compile-action@master
         with:
           include: .
           init-platform: true
           mt-version: 5.0.0.2515
-          path: ${{ matrix.file }}
+          path: "$INDI_WORK_DIR/**/*.mq5"
           verbose: true
       - name: List compiled files
         run: '(Get-ChildItem -Recurse -Path . -Include *.ex[45]).fullname'
@@ -83,4 +62,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: indicators-other
-          path: '**/*.ex[45]'
+          path: "$INDI_WORK_DIR/**/*.ex[45]"
