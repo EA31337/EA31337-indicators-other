@@ -20,7 +20,8 @@ on:
   workflow_call:
 
 env:
-  INDI_OTHER_WORKDIR: indicators-other
+  # Setting an environment variable with the value of a configuration variable.
+  INDI_OTHER_WORKDIR: ${{ vars.INDI_OTHER_WORKDIR || 'indicators-other' }}
 
 jobs:
   Compile:
