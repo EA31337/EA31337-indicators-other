@@ -55,7 +55,9 @@ int WindowFirstVisibleBar(const long chart_ID = 0) {
   return (int)result;
 }
 
-int WindowBarsPerChart() { return ChartGetInteger(0, CHART_VISIBLE_BARS, 0); }
+int WindowBarsPerChart() {
+  return (int)ChartGetInteger(0, CHART_VISIBLE_BARS, 0);
+}
 
 int ObjectFind(string name) { return ObjectFind(0, name); }
 
@@ -70,7 +72,7 @@ bool ObjectSetText(string name, string text, int font_size, string font = "",
       if ((StringLen(font) > 0) &&
           ObjectSetString(0, name, OBJPROP_FONT, font) == false)
         return (false);
-      if (text_color > -1 &&
+      if (text_color != CLR_NONE &&
           ObjectSetInteger(0, name, OBJPROP_COLOR, text_color) == false)
         return (false);
       return (true);
@@ -107,6 +109,20 @@ int WindowFind(string name) {
   }
   return (window);
 }
+
+// Following methods are only valid when used in MQL4 code.
+string StringTrimLeftMQL4(string text) {
+  StringTrimLeft(text);
+  return text;
+}
+
+string StringTrimRightMQL4(string text) {
+  StringTrimRight(text);
+  return text;
+}
+
+#define StringTrimLeft StringTrimLeftMQL4
+#define StringTrimRight StringTrimRightMQL4
 
 // Includes the main file.
 #include "SuperSlope.mq4"
