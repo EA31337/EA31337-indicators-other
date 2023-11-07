@@ -41,7 +41,44 @@
 #define extern input
 #define Bars (ChartStatic::iBars(_Symbol, _Period))
 #define Bid (SymbolInfoStatic::GetBid(_Symbol))
-#define TimeDayOfWeek (DateTime::DateOfWeek())
+#define TimeDayOfWeek DateTimeStatic::DayOfWeek
+
+int WindowFirstVisibleBar(const long chart_ID = 0) {
+  long result = -1;
+
+  ResetLastError();
+
+  if (!ChartGetInteger(chart_ID, CHART_FIRST_VISIBLE_BAR, 0, result)) {
+    Print(__FUNCTION__ + ", Error Code = ", GetLastError());
+  }
+
+  return (int)result;
+}
+
+int WindowBarsPerChart() { return ChartGetInteger(0, CHART_VISIBLE_BARS, 0); }
+
+int ObjectFind(string name) { return ObjectFind(0, name); }
+
+bool ObjectSetText(string name, string text, int font_size, string font = "",
+                   color text_color = CLR_NONE) {
+  int tmpObjType = (int)ObjectGetInteger(0, name, OBJPROP_TYPE);
+  if (tmpObjType != OBJ_LABEL && tmpObjType != OBJ_TEXT)
+    return (false);
+  if (StringLen(text) > 0 && font_size > 0) {
+    if (ObjectSetString(0, name, OBJPROP_TEXT, text) == true &&
+        ObjectSetInteger(0, name, OBJPROP_FONTSIZE, font_size) == true) {
+      if ((StringLen(font) > 0) &&
+          ObjectSetString(0, name, OBJPROP_FONT, font) == false)
+        return (false);
+      if (text_color > -1 &&
+          ObjectSetInteger(0, name, OBJPROP_COLOR, text_color) == false)
+        return (false);
+      return (true);
+    }
+    return (false);
+  }
+  return (false);
+}
 
 // Define global functions.
 #undef DoubleToStr
@@ -56,6 +93,19 @@ int WindowsTotal(const long _cid = 0) {
     Print(__FUNCTION__ + "(): Error code = ", GetLastError());
   }
   return (int)result;
+}
+int WindowOnDropped() { return ChartWindowOnDropped(); }
+int WindowFind(string name) {
+  int window = -1;
+  if ((ENUM_PROGRAM_TYPE)MQLInfoInteger(MQL_PROGRAM_TYPE) ==
+      PROGRAM_INDICATOR) {
+    window = ChartWindowFind();
+  } else {
+    window = ChartWindowFind(0, name);
+    if (window == -1)
+      Print(__FUNCTION__ + "(): Error = ", GetLastError());
+  }
+  return (window);
 }
 
 // Includes the main file.
