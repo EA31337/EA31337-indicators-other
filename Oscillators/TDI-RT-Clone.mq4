@@ -26,7 +26,7 @@
 #property indicator_width4 2
 #property indicator_color5 clrGreen
 #property indicator_width5 2
-#property indicator_color6 CLR_NONE
+#property indicator_color6 clrWhite
 #property indicator_width6 1
 #property indicator_level1 32
 #property indicator_level2 50
@@ -76,7 +76,7 @@ int init() {
   SetIndexBuffer(4, gdaRSISig);
   SetIndexLabel(4,"RSI Signal");
 
-  SetIndexStyle(5, DRAW_NONE);
+  SetIndexStyle(5, DRAW_LINE);
   SetIndexBuffer(5, gdaRSI);
   SetIndexLabel(5,NULL);
   IndicatorDigits(1);
