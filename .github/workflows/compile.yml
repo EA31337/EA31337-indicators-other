@@ -24,12 +24,24 @@ env:
   INDI_OTHER_WORKDIR: ${{ vars.INDI_OTHER_WORKDIR || 'indicators-other' }}
 
 jobs:
+  Install-MT4-Linux:
+    uses: EA31337/ansible-role-metatrader/.github/workflows/platform.yml@dev
+
   Compile:
     defaults:
       run:
         shell: powershell
+    needs: [Install-MT4-Linux]
     runs-on: windows-latest
     steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: platform4
+          path: .mt4
+      - uses: actions/download-artifact@v4
+        with:
+          name: platform5
+          path: .mt5
       - uses: actions/checkout@v3
         with:
           path: ${{ env.INDI_OTHER_WORKDIR }}
@@ -40,20 +52,20 @@ jobs:
           path: Include/EA31337-classes
           ref: v3.000.1
           repository: EA31337/EA31337-classes
-      - name: Compile (build 2361)
+      - name: Compile MQL4
         uses: fx31337/mql-compile-action@master
         with:
           include: .
           init-platform: true
-          mt-version: 5.0.0.2361
+          mt-path: .mt4
           path: ${{ env.INDI_OTHER_WORKDIR }}/**/*.mq?
           verbose: true
-      - name: Compile (build 2515)
+      - name: Compile MQL5
         uses: fx31337/mql-compile-action@master
         with:
           include: .
           init-platform: true
-          mt-version: 5.0.0.2515
+          mt-path: .mt5
           path: ${{ env.INDI_OTHER_WORKDIR }}/**/*.mq5
           verbose: true
       - name: List compiled files
