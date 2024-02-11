@@ -24,27 +24,27 @@ env:
   INDI_OTHER_WORKDIR: ${{ vars.INDI_OTHER_WORKDIR || 'indicators-other' }}
 
 jobs:
-  Platform:
-    uses: EA31337/ansible-role-metatrader/.github/workflows/platform.yml@dev
+  mt4:
+    name: Installs platform (4)
+    uses: EA31337/EA-Tester/.github/workflows/platform-linux.yml@dev
     with:
       artifact: mt4
       version: 4
+  mt5:
+    name: Installs platform (5)
+    uses: EA31337/EA-Tester/.github/workflows/platform-linux.yml@dev
+    with:
+      artifact: mt5
+      version: 5
 
-  Compile:
+  compile-mq4:
     defaults:
       run:
         shell: powershell
-    needs: [Platform]
+    name: Compile MQL4
+    needs: [mt4]
     runs-on: windows-latest
     steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: mt4
-          path: .mt4
-      - uses: actions/download-artifact@v4
-        with:
-          name: mt5
-          path: .mt5
       - uses: actions/checkout@v3
         with:
           path: ${{ env.INDI_OTHER_WORKDIR }}
@@ -55,20 +55,55 @@ jobs:
           path: Include/EA31337-classes
           ref: v3.000.1
           repository: EA31337/EA31337-classes
+      - uses: actions/download-artifact@v4
+        with:
+          name: mt4
+          path: .platform
       - name: Compile MQL4
         uses: fx31337/mql-compile-action@master
         with:
           include: .
           init-platform: true
-          mt-path: .mt4
+          mt-path: .platform
           path: ${{ env.INDI_OTHER_WORKDIR }}/**/*.mq?
           verbose: true
+      - name: List compiled files
+        run: '(Get-ChildItem -Recurse -Path . -Include *.ex[45]).fullname'
+      - run: Get-Location
+      - name: Upload indicator artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: indicators-other
+          path: ${{ env.INDI_OTHER_WORKDIR }}/**/*.ex[45]
+
+  compile-mq5:
+    defaults:
+      run:
+        shell: powershell
+    name: Compile MQL5
+    needs: [mt5]
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          path: ${{ env.INDI_OTHER_WORKDIR }}
+          ref: ${{ github.head_ref || github.ref_name }}
+          repository: EA31337/EA31337-indicators-other
+      - uses: actions/checkout@v3
+        with:
+          path: Include/EA31337-classes
+          ref: v3.000.1
+          repository: EA31337/EA31337-classes
+      - uses: actions/download-artifact@v4
+        with:
+          name: mt5
+          path: .platform
       - name: Compile MQL5
         uses: fx31337/mql-compile-action@master
         with:
           include: .
           init-platform: true
-          mt-path: .mt5
+          mt-path: .platform
           path: ${{ env.INDI_OTHER_WORKDIR }}/**/*.mq5
           verbose: true
       - name: List compiled files
