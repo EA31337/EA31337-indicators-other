@@ -26,6 +26,8 @@ env:
 jobs:
   Install-MT4-Linux:
     uses: EA31337/ansible-role-metatrader/.github/workflows/platform.yml@dev
+    with:
+      workdir: ${{ github.workspace }}
 
   Compile:
     defaults:
