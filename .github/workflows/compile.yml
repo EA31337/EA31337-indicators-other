@@ -24,23 +24,26 @@ env:
   INDI_OTHER_WORKDIR: ${{ vars.INDI_OTHER_WORKDIR || 'indicators-other' }}
 
 jobs:
-  Install-MT4-Linux:
+  Platform:
     uses: EA31337/ansible-role-metatrader/.github/workflows/platform.yml@dev
+    with:
+      artifact: mt4
+      version: 4
 
   Compile:
     defaults:
       run:
         shell: powershell
-    needs: [Install-MT4-Linux]
+    needs: [Platform]
     runs-on: windows-latest
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: platform4
+          name: mt4
           path: .mt4
       - uses: actions/download-artifact@v4
         with:
-          name: platform5
+          name: mt5
           path: .mt5
       - uses: actions/checkout@v3
         with:
