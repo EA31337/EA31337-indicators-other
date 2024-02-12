@@ -45,12 +45,12 @@ jobs:
     needs: [mt4]
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           path: ${{ env.INDI_OTHER_WORKDIR }}
           ref: ${{ github.head_ref || github.ref_name }}
           repository: EA31337/EA31337-indicators-other
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           path: Include/EA31337-classes
           ref: v3.000.1
@@ -71,7 +71,7 @@ jobs:
         run: '(Get-ChildItem -Recurse -Path . -Include *.ex[45]).fullname'
       - run: Get-Location
       - name: Upload indicator artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: indicators-other
           path: ${{ env.INDI_OTHER_WORKDIR }}/**/*.ex[45]
@@ -84,12 +84,12 @@ jobs:
     needs: [mt5]
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           path: ${{ env.INDI_OTHER_WORKDIR }}
           ref: ${{ github.head_ref || github.ref_name }}
           repository: EA31337/EA31337-indicators-other
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           path: Include/EA31337-classes
           ref: v3.000.1
@@ -110,7 +110,7 @@ jobs:
         run: '(Get-ChildItem -Recurse -Path . -Include *.ex[45]).fullname'
       - run: Get-Location
       - name: Upload indicator artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: indicators-other
           path: ${{ env.INDI_OTHER_WORKDIR }}/**/*.ex[45]
