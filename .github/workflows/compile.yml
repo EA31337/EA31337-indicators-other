@@ -65,7 +65,7 @@ jobs:
           include: .
           init-platform: true
           mt-path: .platform
-          path: ${{ env.INDI_OTHER_WORKDIR }}/**/*.mq?
+          path: ${{ env.INDI_OTHER_WORKDIR }}/**/*.mq4
           verbose: true
       - name: List compiled files
         run: '(Get-ChildItem -Recurse -Path . -Include *.ex[45]).fullname'
@@ -114,3 +114,12 @@ jobs:
         with:
           name: indicators-other
           path: ${{ env.INDI_OTHER_WORKDIR }}/**/*.ex[45]
+
+  cleanup:
+    name: Clean-up
+    needs: [compile-mq4, compile-mq5]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: geekyeggo/delete-artifact@v4
+        with:
+          name: mt?
