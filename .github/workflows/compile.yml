@@ -1,11 +1,6 @@
 ---
 name: Compile
 
-env:
-  ARTIFACT_PREFIX: ${{ inputs.artifact_prefix || 'mt' }}
-  # Setting an environment variable with the value of a configuration variable.
-  INDI_OTHER_WORKDIR: ${{ vars.INDI_OTHER_WORKDIR || 'indicators-other' }}
-
 # yamllint disable-line rule:truthy
 on:
   pull_request:
@@ -23,25 +18,23 @@ on:
       - '*.md'
       - '.git*'
   workflow_call:
-    inputs:
-      artifact_prefix:
-        default: mt
-        description: Artifact name
-        required: false
-        type: string
+
+env:
+  # Setting an environment variable with the value of a configuration variable.
+  INDI_OTHER_WORKDIR: ${{ vars.INDI_OTHER_WORKDIR || 'indicators-other' }}
 
 jobs:
   mt4:
     name: Installs platform (4)
     uses: EA31337/EA-Tester/.github/workflows/platform-linux.yml@dev
     with:
-      artifact: ${{ env.ARTIFACT_PREFIX }}4
+      artifact: mt4
       version: 4
   mt5:
     name: Installs platform (5)
     uses: EA31337/EA-Tester/.github/workflows/platform-linux.yml@dev
     with:
-      artifact: ${{ env.ARTIFACT_PREFIX }}5
+      artifact: mt5
       version: 5
 
   compile-mq4:
