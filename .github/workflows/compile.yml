@@ -28,13 +28,15 @@ jobs:
     name: Installs platform (4)
     uses: EA31337/EA-Tester/.github/workflows/platform-linux.yml@dev
     with:
-      artifact: mt4
+      artifact_name: mt4
+      artifact_overwrite: true
       version: 4
   mt5:
     name: Installs platform (5)
     uses: EA31337/EA-Tester/.github/workflows/platform-linux.yml@dev
     with:
-      artifact: mt5
+      artifact_name: mt5
+      artifact_overwrite: true
       version: 5
 
   compile-mq4:
