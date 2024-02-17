@@ -116,6 +116,7 @@ jobs:
           path: ${{ env.INDI_OTHER_WORKDIR }}/**/*.ex[45]
 
   cleanup:
+    if: always()
     name: Clean-up
     needs: [compile-mq4, compile-mq5]
     runs-on: ubuntu-latest
