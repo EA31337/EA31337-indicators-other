@@ -73,7 +73,7 @@ jobs:
       - name: Upload indicator artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: indicators-other
+          name: indicators-other-ex4
           path: ${{ env.INDI_OTHER_WORKDIR }}/**/*.ex[45]
 
   compile-mq5:
@@ -112,7 +112,7 @@ jobs:
       - name: Upload indicator artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: indicators-other
+          name: indicators-other-ex5
           path: ${{ env.INDI_OTHER_WORKDIR }}/**/*.ex[45]
 
   cleanup:
