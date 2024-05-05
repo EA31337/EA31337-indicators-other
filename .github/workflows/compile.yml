@@ -1,42 +1,59 @@
 ---
 name: Compile
 
+# Setting an environment variable with the value of a configuration variable.
+env:
+  ARTIFACT_PREFIX: ${{ inputs.artifact_prefix || 'mt' }}
+  INDI_OTHER_WORKDIR: ${{ vars.INDI_OTHER_WORKDIR || 'indicators-other' }}
+  REPOSITORY: EA31337/EA31337-indicators-common
+  SKIP_CLEANUP: ${{ inputs.skip_cleanup || false }}
+
 # yamllint disable-line rule:truthy
 on:
   pull_request:
     branches:
       - 'master'
-      - 'dev*'
+      - '*dev*'
     paths-ignore:
       - '*.md'
       - '.git*'
   push:
     branches:
       - 'master'
-      - 'dev*'
+      - '*dev*'
     paths-ignore:
       - '*.md'
       - '.git*'
   workflow_call:
-
-env:
-  # Setting an environment variable with the value of a configuration variable.
-  INDI_OTHER_WORKDIR: ${{ vars.INDI_OTHER_WORKDIR || 'indicators-other' }}
+    inputs:
+      artifact_prefix:
+        default: mt
+        description: Artifact prefix.
+        required: false
+        type: string
+      skip_cleanup:
+        default: false
+        description: Whether to skip a clean-up job.
+        required: false
+        type: boolean
 
 jobs:
   mt4:
     name: Installs platform (4)
     uses: EA31337/EA-Tester/.github/workflows/platform-linux.yml@dev
     with:
-      artifact_name: mt4
+      artifact_name: ${{ inputs.artifact_prefix || 'mt' }}4
       artifact_overwrite: true
+      skip_cleanup: true
       version: 4
+
   mt5:
     name: Installs platform (5)
     uses: EA31337/EA-Tester/.github/workflows/platform-linux.yml@dev
     with:
-      artifact_name: mt5
+      artifact_name: ${{ inputs.artifact_prefix || 'mt' }}5
       artifact_overwrite: true
+      skip_cleanup: true
       version: 5
 
   compile-mq4:
@@ -59,14 +76,14 @@ jobs:
           repository: EA31337/EA31337-classes
       - uses: actions/download-artifact@v4
         with:
-          name: mt4
-          path: .platform
+          name: ${{ env.ARTIFACT_PREFIX }}4
+          path: .${{ env.ARTIFACT_PREFIX }}4
       - name: Compile MQL4
         uses: fx31337/mql-compile-action@master
         with:
           include: .
           init-platform: true
-          mt-path: .platform
+          mt-path: .${{ env.ARTIFACT_PREFIX }}4
           path: ${{ env.INDI_OTHER_WORKDIR }}/**/*.mq4
           verbose: true
       - name: List compiled files
@@ -75,8 +92,10 @@ jobs:
       - name: Upload indicator artifacts
         uses: actions/upload-artifact@v4
         with:
+          if-no-files-found: error
           name: indicators-other-ex4
           path: ${{ env.INDI_OTHER_WORKDIR }}/**/*.ex[45]
+    timeout-minutes: 20
 
   compile-mq5:
     defaults:
@@ -98,14 +117,14 @@ jobs:
           repository: EA31337/EA31337-classes
       - uses: actions/download-artifact@v4
         with:
-          name: mt5
-          path: .platform
+          name: ${{ env.ARTIFACT_PREFIX }}5
+          path: .${{ env.ARTIFACT_PREFIX }}5
       - name: Compile MQL5
         uses: fx31337/mql-compile-action@master
         with:
           include: .
           init-platform: true
-          mt-path: .platform
+          mt-path: .${{ env.ARTIFACT_PREFIX }}5
           path: ${{ env.INDI_OTHER_WORKDIR }}/**/*.mq5
           verbose: true
       - name: List compiled files
@@ -118,11 +137,11 @@ jobs:
           path: ${{ env.INDI_OTHER_WORKDIR }}/**/*.ex[45]
 
   cleanup:
-    if: always()
+    if: inputs.skip_cleanup != true
     name: Clean-up
     needs: [compile-mq4, compile-mq5]
     runs-on: ubuntu-latest
     steps:
-      - uses: geekyeggo/delete-artifact@v4
+      - uses: geekyeggo/delete-artifact@v5
         with:
-          name: mt?
+          name: ${{ env.ARTIFACT_PREFIX }}*
