@@ -5,7 +5,7 @@ name: Compile
 env:
   ARTIFACT_PREFIX: ${{ inputs.artifact_prefix || 'mt' }}
   INDI_OTHER_WORKDIR: ${{ vars.INDI_OTHER_WORKDIR || 'indicators-other' }}
-  REPOSITORY: EA31337/EA31337-indicators-common
+  REPOSITORY: EA31337/EA31337-indicators-other
   SKIP_CLEANUP: ${{ inputs.skip_cleanup || false }}
 
 # yamllint disable-line rule:truthy
@@ -56,54 +56,61 @@ jobs:
       skip_cleanup: true
       version: 5
 
-  compile-mq4:
+  compile-platform-indicators:
     defaults:
       run:
         shell: powershell
-    name: Compile MQL4
-    needs: [mt4]
+    name: Compile platform indicators
+    needs: [mt4, mt5]
     runs-on: windows-latest
+    strategy:
+      matrix:
+        version: [4, 5]
     steps:
-      - uses: actions/checkout@v4
-        with:
-          path: ${{ env.INDI_OTHER_WORKDIR }}
-          ref: ${{ github.head_ref || github.ref_name }}
-          repository: EA31337/EA31337-indicators-other
-      - uses: actions/checkout@v4
-        with:
-          path: Include/EA31337-classes
-          ref: v3.000.1
-          repository: EA31337/EA31337-classes
       - uses: actions/download-artifact@v4
         with:
-          name: ${{ env.ARTIFACT_PREFIX }}4
-          path: .${{ env.ARTIFACT_PREFIX }}4
-      - name: Compile MQL4
-        uses: fx31337/mql-compile-action@master
+          name: ${{ env.ARTIFACT_PREFIX }}${{ matrix.version }}
+          path: .${{ env.ARTIFACT_PREFIX }}${{ matrix.version }}
+      - name: Compile MQL
+        uses: fx31337/mql-compile-action@dev
         with:
           include: .
           init-platform: true
-          mt-path: .${{ env.ARTIFACT_PREFIX }}4
-          path: ${{ env.INDI_OTHER_WORKDIR }}/**/*.mq4
+          mt-path: .${{ env.ARTIFACT_PREFIX }}${{ matrix.version }}
+          # yamllint disable-line rule:line-length
+          path: .${{ env.ARTIFACT_PREFIX }}${{ matrix.version }}/**/MQL?/Indicators
           verbose: true
+      - name: Copy MQL to the current location
+        run: >-
+          Copy-Item
+          -Path ".${{ env.ARTIFACT_PREFIX }}*\*\*\MQL?"
+          -Destination .
+          -Recurse
+          -Verbose
+      - name: List all source code files
+        run: '(Get-ChildItem -Recurse -Path "MQL?" -Include *.mq[45]).fullname'
       - name: List compiled files
-        run: '(Get-ChildItem -Recurse -Path . -Include *.ex[45]).fullname'
-      - run: Get-Location
-      - name: Upload indicator artifacts
+        run: '(Get-ChildItem -Recurse -Path "MQL?" -Include *.ex[45]).fullname'
+      - name: Upload platform indicators
         uses: actions/upload-artifact@v4
         with:
           if-no-files-found: error
-          name: indicators-other-ex4
-          path: ${{ env.INDI_OTHER_WORKDIR }}/**/*.ex[45]
+          name: platform-indicators-ex${{ matrix.version }}
+          path: MQL?/**/*.[me][qx][45h]
+      - if: ${{ failure() }}
+        uses: mxschmitt/action-tmate@v3
     timeout-minutes: 20
 
-  compile-mq5:
+  compile-indicators:
     defaults:
       run:
         shell: powershell
-    name: Compile MQL5
-    needs: [mt5]
+    name: Compile Indicators Other
+    needs: [compile-platform-indicators]
     runs-on: windows-latest
+    strategy:
+      matrix:
+        version: [4, 5]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -112,20 +119,27 @@ jobs:
           repository: EA31337/EA31337-indicators-other
       - uses: actions/checkout@v4
         with:
-          path: Include/EA31337-classes
+          path: MQL${{ matrix.version}}/Include/EA31337-classes
           ref: v3.000.1
           repository: EA31337/EA31337-classes
       - uses: actions/download-artifact@v4
         with:
-          name: ${{ env.ARTIFACT_PREFIX }}5
-          path: .${{ env.ARTIFACT_PREFIX }}5
-      - name: Compile MQL5
+          name: ${{ env.ARTIFACT_PREFIX }}${{ matrix.version }}
+          path: .${{ env.ARTIFACT_PREFIX }}${{ matrix.version }}
+      - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+          pattern: platform-indicators-ex?
+      - name: List all source code files
+        run: '(Get-ChildItem -Recurse -Path . -Include *.mq[45]).fullname'
+      - name: List compiled files
+        run: '(Get-ChildItem -Recurse -Path . -Include *.ex[45]).fullname'
+      - name: Compile
         uses: fx31337/mql-compile-action@master
         with:
-          include: .
-          init-platform: true
-          mt-path: .${{ env.ARTIFACT_PREFIX }}5
-          path: ${{ env.INDI_OTHER_WORKDIR }}/**/*.mq5
+          include: MQL${{ matrix.version }}
+          mt-path: .${{ env.ARTIFACT_PREFIX }}${{ matrix.version }}
+          path: ${{ env.INDI_OTHER_WORKDIR }}/**/*.mq${{ matrix.version }}
           verbose: true
       - name: List compiled files
         run: '(Get-ChildItem -Recurse -Path . -Include *.ex[45]).fullname'
@@ -133,13 +147,14 @@ jobs:
       - name: Upload indicator artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: indicators-other-ex5
+          name: indicators-other-ex${{ matrix.version }}
           path: ${{ env.INDI_OTHER_WORKDIR }}/**/*.ex[45]
+    timeout-minutes: 30
 
   cleanup:
     if: inputs.skip_cleanup != true
     name: Clean-up
-    needs: [compile-mq4, compile-mq5]
+    needs: [compile-indicators]
     runs-on: ubuntu-latest
     steps:
       - uses: geekyeggo/delete-artifact@v5
