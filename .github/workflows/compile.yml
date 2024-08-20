@@ -4,6 +4,8 @@ name: Compile
 # Setting an environment variable with the value of a configuration variable.
 env:
   ARTIFACT_PREFIX: ${{ inputs.artifact_prefix || 'mt' }}
+  # yamllint disable-line rule:line-length
+  CHECKOUT_BRANCH: ${{ inputs.checkout_branch || github.head_ref || github.ref_name }}
   INDI_OTHER_WORKDIR: ${{ vars.INDI_OTHER_WORKDIR || 'indicators-other' }}
   REPOSITORY: EA31337/EA31337-indicators-other
   SKIP_CLEANUP: ${{ inputs.skip_cleanup || false }}
@@ -29,6 +31,11 @@ on:
       artifact_prefix:
         default: mt
         description: Artifact prefix.
+        required: false
+        type: string
+      checkout_branch:
+        default: ${{ github.head_ref || github.ref_name }}
+        description: Checkout branch
         required: false
         type: string
       skip_cleanup:
@@ -105,7 +112,7 @@ jobs:
     defaults:
       run:
         shell: powershell
-    name: Compile Indicators Other
+    name: Compile Indicators
     needs: [compile-platform-indicators]
     runs-on: windows-latest
     strategy:
@@ -115,7 +122,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           path: ${{ env.INDI_OTHER_WORKDIR }}
-          ref: ${{ github.head_ref || github.ref_name }}
+          ref: ${{ env.CHECKOUT_BRANCH }}
           repository: EA31337/EA31337-indicators-other
       - uses: actions/checkout@v4
         with:
