@@ -1,80 +1,170 @@
 ---
 name: Compile
 
+# Setting an environment variable with the value of a configuration variable.
+env:
+  ARTIFACT_PREFIX: ${{ inputs.artifact_prefix || 'mt' }}
+  # yamllint disable-line rule:line-length
+  CHECKOUT_BRANCH: ${{ inputs.checkout_branch || github.head_ref || github.ref_name }}
+  INDI_OTHER_WORKDIR: ${{ vars.INDI_OTHER_WORKDIR || 'indicators-other' }}
+  REPOSITORY: EA31337/EA31337-indicators-other
+  SKIP_CLEANUP: ${{ inputs.skip_cleanup || false }}
+
 # yamllint disable-line rule:truthy
 on:
   pull_request:
     branches:
       - 'master'
-      - 'dev*'
+      - '*dev*'
     paths-ignore:
       - '*.md'
       - '.git*'
   push:
     branches:
       - 'master'
-      - 'dev*'
+      - '*dev*'
     paths-ignore:
       - '*.md'
       - '.git*'
+  workflow_call:
+    inputs:
+      artifact_prefix:
+        default: mt
+        description: Artifact prefix.
+        required: false
+        type: string
+      checkout_branch:
+        default: ${{ github.head_ref || github.ref_name }}
+        description: Checkout branch
+        required: false
+        type: string
+      skip_cleanup:
+        default: false
+        description: Whether to skip a clean-up job.
+        required: false
+        type: boolean
 
 jobs:
-  GetList:
-    outputs:
-      filelist: ${{ steps.get-files.outputs.filelist }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set output with list of files
-        id: get-files
-        run: |
-          import glob, json, os
-          fghout = os.environ["GITHUB_OUTPUT"]
-          files = glob.glob("**/*.mq?", recursive=True)
-          filelist = "filelist={}".format(json.dumps(files))
-          with open(fghout, "a") as fd:
-            fd.write(filelist)
-        shell: python
-      - name: Display outputs
-        run: echo "${{ toJson(steps.get-files.outputs) }}"
-  Compile:
+  mt4:
+    name: Installs platform (4)
+    uses: EA31337/EA-Tester/.github/workflows/platform-linux.yml@dev
+    with:
+      artifact_name: ${{ inputs.artifact_prefix || 'mt' }}4
+      artifact_overwrite: true
+      skip_cleanup: true
+      version: 4
+
+  mt5:
+    name: Installs platform (5)
+    uses: EA31337/EA-Tester/.github/workflows/platform-linux.yml@dev
+    with:
+      artifact_name: ${{ inputs.artifact_prefix || 'mt' }}5
+      artifact_overwrite: true
+      skip_cleanup: true
+      version: 5
+
+  compile-platform-indicators:
     defaults:
       run:
         shell: powershell
-    needs: [GetList]
+    name: Compile platform indicators
+    needs: [mt4, mt5]
     runs-on: windows-latest
     strategy:
       matrix:
-        file: ${{ fromJson(needs.GetList.outputs.filelist) }}
+        version: [4, 5]
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/checkout@v3
+      - uses: actions/download-artifact@v4
         with:
-          path: Include/EA31337-classes
-          ref: v3.000-dev
-          repository: EA31337/EA31337-classes
-      - name: Compile (build 2361)
-        uses: fx31337/mql-compile-action@master
+          name: ${{ env.ARTIFACT_PREFIX }}${{ matrix.version }}
+          path: .${{ env.ARTIFACT_PREFIX }}${{ matrix.version }}
+      - name: Compile MQL
+        uses: fx31337/mql-compile-action@dev
         with:
           include: .
           init-platform: true
-          mt-version: 5.0.0.2361
-          path: ${{ matrix.file }}
+          mt-path: .${{ env.ARTIFACT_PREFIX }}${{ matrix.version }}
+          # yamllint disable-line rule:line-length
+          path: .${{ env.ARTIFACT_PREFIX }}${{ matrix.version }}/**/MQL?/Indicators
           verbose: true
-      - name: Compile (build 2515)
-        if: endsWith(matrix.file, '.mq5')
+      - name: Copy MQL to the current location
+        run: >-
+          Copy-Item
+          -Path ".${{ env.ARTIFACT_PREFIX }}*\*\*\MQL?"
+          -Destination .
+          -Recurse
+          -Verbose
+      - name: List all source code files
+        run: '(Get-ChildItem -Recurse -Path "MQL?" -Include *.mq[45]).fullname'
+      - name: List compiled files
+        run: '(Get-ChildItem -Recurse -Path "MQL?" -Include *.ex[45]).fullname'
+      - name: Upload platform indicators
+        uses: actions/upload-artifact@v4
+        with:
+          if-no-files-found: error
+          name: ${{ env.ARTIFACT_PREFIX }}-indicators-ex${{ matrix.version }}
+          path: MQL?/**/*.[me][qx][45h]
+      - if: ${{ failure() }}
+        uses: mxschmitt/action-tmate@v3
+    timeout-minutes: 20
+
+  compile-indicators:
+    defaults:
+      run:
+        shell: powershell
+    name: Compile Indicators
+    needs: [compile-platform-indicators]
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        version: [4, 5]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: ${{ env.INDI_OTHER_WORKDIR }}
+          ref: ${{ env.CHECKOUT_BRANCH }}
+          repository: EA31337/EA31337-indicators-other
+      - uses: actions/checkout@v4
+        with:
+          path: MQL${{ matrix.version}}/Include/EA31337-classes
+          ref: v3.000.1
+          repository: EA31337/EA31337-classes
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.ARTIFACT_PREFIX }}${{ matrix.version }}
+          path: .${{ env.ARTIFACT_PREFIX }}${{ matrix.version }}
+      - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+          pattern: ${{ env.ARTIFACT_PREFIX }}-indicators-ex?
+      - name: List all source code files
+        run: '(Get-ChildItem -Recurse -Path . -Include *.mq[45]).fullname'
+      - name: List compiled files
+        run: '(Get-ChildItem -Recurse -Path . -Include *.ex[45]).fullname'
+      - name: Compile
         uses: fx31337/mql-compile-action@master
         with:
-          include: .
-          init-platform: true
-          mt-version: 5.0.0.2515
-          path: ${{ matrix.file }}
+          include: MQL${{ matrix.version }}
+          mt-path: .${{ env.ARTIFACT_PREFIX }}${{ matrix.version }}
+          path: ${{ env.INDI_OTHER_WORKDIR }}/**/*.mq${{ matrix.version }}
           verbose: true
       - name: List compiled files
         run: '(Get-ChildItem -Recurse -Path . -Include *.ex[45]).fullname'
       - run: Get-Location
       - name: Upload indicator artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: Indicators-other
-          path: '**/*.ex?'
+          # yamllint disable-line rule:line-length
+          name: ${{ env.ARTIFACT_PREFIX }}-indicators-other-ex${{ matrix.version }}
+          path: ${{ env.INDI_OTHER_WORKDIR }}/**/*.ex[45]
+    timeout-minutes: 30
+
+  cleanup:
+    if: inputs.skip_cleanup != true
+    name: Clean-up
+    needs: [compile-indicators]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: geekyeggo/delete-artifact@v5
+        with:
+          name: ${{ env.ARTIFACT_PREFIX }}*

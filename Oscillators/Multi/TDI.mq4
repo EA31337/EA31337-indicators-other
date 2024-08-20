@@ -92,12 +92,12 @@
 #property indicator_separate_window
 
 extern int RSI_Period = 13;         //8-25
-extern int RSI_Price = 0;           //0-6
+extern ENUM_APPLIED_PRICE RSI_Price = PRICE_CLOSE;
 extern int Volatility_Band = 34;    //20-40
 extern int RSI_Price_Line = 2;
-extern int RSI_Price_Type = 0;      //0-3
+extern ENUM_MA_METHOD RSI_Price_Type = MODE_SMA;
 extern int Trade_Signal_Line = 7;
-extern int Trade_Signal_Type = 0;   //0-3
+extern ENUM_MA_METHOD Trade_Signal_Type = MODE_SMA;
 
 double RSIBuf[],UpZone[],MdZone[],DnZone[],MaBuf[],MbBuf[];
 
@@ -141,7 +141,7 @@ int start()
    ArrayResize(RSI,Volatility_Band);
    int counted_bars=IndicatorCounted();
    int i;
-   int limit = Bars-counted_bars-1;
+   int limit = MathMax(0, Bars - counted_bars - Volatility_Band);
    for(i=limit; i>=0; i--)
    {
       RSIBuf[i] = (iRSI(NULL,0,RSI_Period,RSI_Price,i));

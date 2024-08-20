@@ -22,13 +22,13 @@
 #ifndef ENUM_INDICATOR_OTHER_DEFINED
 // Defines enum with supported indicator list.
 enum ENUM_INDICATOR_OTHER {
-  INDI_OTHER_0_NONE = 0,        // (None)
-  INDI_OTHER_MISC_ATR_MA_TREND, // Misc: ATR MA Trend
-  INDI_OTHER_OSC_SUPERSLOPE,    // Oscillator: Super Slope
-  INDI_OTHER_OSC_TDI,           // Oscillator: TDI (Traders Dynamic Index)
-  INDI_OTHER_OSC_TDI_RT_CLONE,  // Oscillator: TDI-RT-Clone
-  INDI_OTHER_OSC_TMA_CG,        // Oscillator: TMA CG
-  INDI_OTHER_PRICE_EWO2,        // Oscillator: Elliott Wave Oscillator 2
+  INDI_OTHER_0_NONE = 0,             // (None)
+  INDI_OTHER_MISC_ATR_MA_TREND,      // Misc: ATR MA Trend
+  INDI_OTHER_OSC_SUPERSLOPE,         // Oscillator: Super Slope
+  INDI_OTHER_OSC_MULTI_EWO2,         // Oscillator: Elliott Wave Oscillator 2
+  INDI_OTHER_OSC_MULTI_TDI,          // Oscillator: TDI (Traders Dynamic Index)
+  INDI_OTHER_OSC_MULTI_TDI_RT_CLONE, // Oscillator: TDI-RT-Clone
+  INDI_OTHER_OSC_MULTI_TMA_CG,       // Oscillator: TMA CG
   INDI_OTHER_PRICE_MULTI_OHLC_HA_SMOOTHED, // Price/Range: SVE Bollinger Bands
   INDI_OTHER_PRICE_RANGE_SVE_BB,           // Price/Range: SVE Bollinger Bands
 };

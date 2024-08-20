@@ -28,11 +28,3 @@ In summary, oscillators are a type of indicator used in technical
 analysis that measure price momentum and provide insights into
 overbought or oversold conditions.  They are considered a subset of
 indicators due to their specific function and characteristics.
-
-## TDI (Traders Dynamic Index)
-
-The Traders Dynamic Index (TDI) is a versatile trading indicator designed to
-aid traders in analyzing market conditions related to trend direction, market
-strength, and volatility. It combines RSI, Moving Averages, and volatility
-bands to offer insights into trend direction, market strength, and volatility
-which gives comprehensive overview of the market's behavior.
