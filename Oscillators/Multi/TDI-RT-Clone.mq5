@@ -3,9 +3,18 @@
  * Implements indicator under MQL5.
  */
 
+#define ERR_USER_INVALID_HANDLE 1
+#define ERR_USER_INVALID_BUFF_NUM 2
+#define ERR_USER_ITEM_NOT_FOUND 3
+#define ERR_USER_ARRAY_IS_EMPTY 1000
+
+// clang-format off
+#define INDICATOR_LEGACY_VERSION_MT4
+#include <EA31337-classes/IndicatorLegacy.h>
+// clang-format on
+
 // Defines indicator properties.
 #property indicator_separate_window
-
 #property indicator_buffers 6
 #property indicator_plots 5
 #property indicator_color1 clrBlue
@@ -33,30 +42,42 @@
 
 // Defines macros.
 #define extern input
-#define Bars fmin(10000, (ChartStatic::iBars(_Symbol, _Period)))
+//#define Bars fmin(1000, (ChartStatic::iBars(_Symbol, _Period)))
+#define Bars ChartStatic::iBars(_Symbol, _Period)
 #define Bid (SymbolInfoStatic::GetBid(_Symbol))
 #define TimeDayOfWeek (DateTime::DateOfWeek())
 
 // Includes the main file.
-#include "TDI-RT-Clone.mq4"
+#include "TDI-RT-Clone - New.mq4"
 
 // Custom indicator initialization function.
-void OnInit() {
-  init();
-  if (!ArrayGetAsSeries(gdaRSI)) {
-    ArraySetAsSeries(gdaRSI, true);
-    ArraySetAsSeries(gdaRSISig, true);
-    ArraySetAsSeries(gdaTradeSig, true);
-    ArraySetAsSeries(gdaMktBase, true);
-    ArraySetAsSeries(gdaVolaTop, true);
-    ArraySetAsSeries(gdaVolaBtm, true);
-  }
-}
+void OnInit() { init(); }
 
 // Custom indicator iteration function.
 int OnCalculate(const int rates_total, const int prev_calculated,
                 const int begin, const double &price[]) {
   IndicatorCounted(fmin(prev_calculated, Bars));
   ResetLastError();
-  return start() >= 0 ? rates_total : 0;
+
+  int res;
+
+  bool asSeries = true;
+  ArraySetAsSeries(gdaRSI, asSeries);
+  ArraySetAsSeries(gdaRSISig, asSeries);
+  ArraySetAsSeries(gdaTradeSig, asSeries);
+  ArraySetAsSeries(gdaMktBase, asSeries);
+  ArraySetAsSeries(gdaVolaTop, asSeries);
+  ArraySetAsSeries(gdaVolaBtm, asSeries);
+
+  res = start() >= 0 ? rates_total : 0;
+
+  asSeries = false;
+  ArraySetAsSeries(gdaRSI, asSeries);
+  ArraySetAsSeries(gdaRSISig, asSeries);
+  ArraySetAsSeries(gdaTradeSig, asSeries);
+  ArraySetAsSeries(gdaMktBase, asSeries);
+  ArraySetAsSeries(gdaVolaTop, asSeries);
+  ArraySetAsSeries(gdaVolaBtm, asSeries);
+
+  return res;
 }
