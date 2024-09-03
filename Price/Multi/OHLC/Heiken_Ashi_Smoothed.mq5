@@ -66,7 +66,7 @@ int OnCalculate(const int rates_total, const int prev_calculated,
                 const int begin, const double &price[]) {
   IndicatorCounted(fmin(prev_calculated, Bars));
   ResetLastError();
-  
+
   ArraySetAsSeries(ExtMapBuffer1, true);
   ArraySetAsSeries(ExtMapBuffer2, true);
   ArraySetAsSeries(ExtMapBuffer3, true);
