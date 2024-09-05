@@ -167,4 +167,4 @@ jobs:
     steps:
       - uses: geekyeggo/delete-artifact@v5
         with:
-          name: ${{ env.ARTIFACT_PREFIX }}*
+          name: ${{ env.ARTIFACT_PREFIX }}?
