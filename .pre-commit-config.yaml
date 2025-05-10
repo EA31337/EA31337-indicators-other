@@ -2,30 +2,24 @@
 repos:
 
   - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.31.0
+    rev: v1.37.1
     hooks:
       - id: yamllint
+        args: ["-c", ".yamllint", "-s"]
+
+  - repo: https://github.com/ansible-community/ansible-lint
+    rev: v25.1.3
+    hooks:
+      - id: ansible-lint
+        files: ^ansible/
 
   - repo: https://github.com/igorshubovych/markdownlint-cli.git
-    rev: v0.27.1
+    rev: v0.44.0
     hooks:
       - id: markdownlint
 
-  - repo: https://github.com/jumanjihouse/pre-commit-hooks
-    rev: 2.1.5
-    hooks:
-      - id: forbid-binary
-        exclude: (\.ico|\.mqproj)$
-      - id: git-check     # Configure in .gitattributes
-      # - id: markdownlint  # Configure in .mdlrc.style.rb
-
-  - repo: https://github.com/thibaudcolas/curlylint
-    rev: v0.13.1
-    hooks:
-      - id: curlylint
-
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.3.0
+    rev: v5.0.0
     hooks:
       - id: check-added-large-files
       - id: check-byte-order-marker
@@ -37,3 +31,22 @@ repos:
         exclude: \.txt$
       - id: trailing-whitespace
         exclude: \.txt$
+
+  - repo: https://github.com/jumanjihouse/pre-commit-hooks
+    rev: 3.0.0
+    hooks:
+      - id: forbid-binary
+        exclude: (\.ico|\.mqproj)$
+      - id: git-check     # Configure in .gitattributes
+      #   exclude: \.txt$
+      # @fixme: https://github.com/jumanjihouse/pre-commit-hooks/issues/79
+      # - id: markdownlint  # Configure in .mdlrc
+      - id: require-ascii
+      - id: script-must-have-extension
+      # - id: shellcheck
+      - id: shfmt
+
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.7
+    hooks:
+      - id: actionlint
